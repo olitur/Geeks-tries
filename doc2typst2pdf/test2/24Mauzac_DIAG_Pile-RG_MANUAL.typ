@@ -79,25 +79,48 @@ Pile RG transbordeur à batardeaux
 Ce document est la seule propriété d'HYDROSTADIUM, il ne peut être
 modifié ou diffusé à des tiers sans autorisation écrite préalable.
 
-Tableau de suivi de révision
+/ Define globally (in your style.typ)
+#let th(content) = table.cell(
+  fill: gray.lighten(80%),
+  align: center + horizon,
+  [#strong[#content]]
+)
 
-#figure(
-  align(center)[#table(
-    columns: (10.89%, 26.02%, 13.36%, 16.58%, 16.58%, 16.58%),
-    align: (auto,auto,auto,auto,auto,auto,),
-    table.header([Indice], [Objet succinct de la
-      révision], [Date], [Rédacteur], [Vérificateur], [Approbateur],),
-    table.hline(),
-    [A0-PREL], [Édition initiale], [28/06/2021], [Olivier
+#show table: it => {
+  set text(hyphenate: false)
+  it
+}
+
+
+#strong[Tableau de suivi de révision :]
+// #table(
+//     columns: (10.89%, 26.02%, 13.36%, 16.58%, 16.58%, 16.58%),
+//     align: (auto,auto,auto,auto,auto,auto,),
+//     table.header([Indice], [Objet succinct de la
+//       révision], [Date], [Rédacteur], [Vérificateur], [Approbateur],),
+//     table.hline(),
+//     [A0-PREL], [Édition initiale], [28/06/2021], [Olivier
+//     TURLIER], [Cécile POULY], [Vincent LABETOULE],
+//     table.cell(align: right, colspan: 3)[Signatures], [], [], [],
+// )
+#table(
+    columns: (auto, auto, auto, auto, auto, auto),
+    align: left,
+    stroke: 1pt + luma(50%),
+    inset: .5em,
+    table.header(
+      [#th[Indice]],
+      [#th[Objet succinct de la révision]],
+      [#th[Date]],
+      [#th[Rédacteur]],
+      [#th[Vérificateur]],
+      [#th[Approbateur]]),
+    table.cell(align: center + horizon, [*A0-PREL*]),
+    [Édition initiale], [28/06/2021], [Olivier
     TURLIER], [Cécile POULY], [Vincent LABETOULE],
-    table.cell(align: right, colspan: 3)[#emph[Signatures];], [], [], [],
-  )]
-  , kind: table
-  )
-
-Objet de la révision
-
-Sans objet
+    table.cell(align: right, colspan: 3)[Signatures], [], [], [],
+    table.cell(align: left, colspan: 2)[Objet de la révision], table.cell(align: left, colspan: 4)[Sans objet à ce stade de l'étude _édition initiale_],
+)
 
 // Section: = Généralités
 #pagebreak(weak: true)
