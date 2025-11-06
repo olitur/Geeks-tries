@@ -60,10 +60,8 @@ Pile RG transbordeur à batardeaux
 
 #strong[DIAGNOSTIC GÉNIE-CIVIL]
 
-#figure(#image("media/image1.jpeg", width: 80%),
-  caption: [
-    Figure 1 : Pile RG vue depuis la berge, en amont de l'ouvrage
-]]
+#figure(image("media/image1.jpeg", width: 80%),
+  caption: [Pile RG vue depuis la berge, en amont de l'ouvrage]
 )
 
 #figure(
