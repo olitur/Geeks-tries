@@ -1,8 +1,10 @@
-# Ignore test output files
-*_test.typ
-*_test.pdf
-test_output.typ
-test_output.pdf
+# Ignore ALL generated output files
+*.typ
+*.pdf
+
+# Exception: Keep the source DOCX file (not ignored)
+
+# Ignore conversion logs
 conversion_log.txt
 
 # Ignore image backups created by optimization
