@@ -2,6 +2,9 @@
 *.typ
 *.pdf
 
+# EXCEPTION: Keep manually edited version
+!24Mauzac_DIAG_Pile-RG_MANUAL.typ
+
 # Exception: Keep the source DOCX file (not ignored)
 
 # Ignore conversion logs
