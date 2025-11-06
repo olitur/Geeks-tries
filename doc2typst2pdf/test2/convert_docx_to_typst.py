@@ -713,44 +713,73 @@ def post_process_typst(content, doc_title="Document", doc_filename="document"):
 
     # IMPORTANT: Handle image+caption wrapping BEFORE adding # prefix to standalone images
     # This ensures images inside #figure() don't get # prefix
+    # BUT: Do NOT wrap in #figure() if inside a table!
 
-    # Handle image captions detected after images
-    # This is crucial: Pandoc often outputs standalone images followed by captions
-    # We need to wrap them in #figure() constructs
+    # Strategy: Process content tracking table context, only wrap in #figure() when NOT in table
+    def wrap_images_with_captions(text):
+        """Wrap image+caption pairs in #figure(), but NOT if inside tables"""
+        lines = text.split('\n')
+        result = []
+        in_table = False
+        bracket_depth = 0
+        i = 0
 
-    def convert_image_with_caption(match):
-        image_call = match.group(1)
-        # Remove # prefix if present (will be re-added for standalone images later)
-        image_call = image_call.lstrip('#')
-        caption_text = match.group(2).strip()
-        return f'#figure(\n  {image_call},\n  caption: [{caption_text}]\n)'
+        while i < len(lines):
+            line = lines[i]
 
-    # Pattern 1: Image followed by ": caption text" (Pandoc list-style caption)
-    # #image(...)\n\n      : caption text
-    content = re.sub(
-        r'(#?image\("[^"]+",\s*width:\s*\d+%\))\s*\n\s*:\s*([^\n]+)',
-        convert_image_with_caption,
-        content
-    )
+            # Track table context
+            if 'table(' in line or 'table.header(' in line or 'table.hline(' in line:
+                in_table = True
+                bracket_depth = line.count('(') - line.count(')')
 
-    # Pattern 2: Image followed by "Figure X:" caption (most common)
-    # #image("media/image1.jpeg", width: 80%)
-    # \n
-    # Figure 1 : Caption text
-    content = re.sub(
-        r'(#?image\("[^"]+",\s*width:\s*\d+%\))\s*\n\s*\n\s*(Figure\s+\d+\s*[:\-–—]?\s*[^\n]+)',
-        convert_image_with_caption,
-        content,
-        flags=re.IGNORECASE
-    )
+            if in_table:
+                bracket_depth += line.count('(') - line.count(')')
+                if bracket_depth <= 0:
+                    in_table = False
 
-    # Pattern 3: Image followed by other caption patterns like "Photo X:", "Image X:", etc.
-    content = re.sub(
-        r'(#?image\("[^"]+",\s*width:\s*\d+%\))\s*\n\s*\n\s*((Photo|Image|Illustration|Schéma|Graphique)\s+\d+\s*[:\-–—]?\s*[^\n]+)',
-        convert_image_with_caption,
-        content,
-        flags=re.IGNORECASE
-    )
+            # Check for image followed by caption pattern
+            # Pattern: image("...", width: ...) on current line, caption on next line(s)
+            image_match = re.match(r'\s*(#?image\("[^"]+",\s*width:\s*\d+%\))\s*$', line)
+
+            if image_match and i + 1 < len(lines):
+                next_line = lines[i + 1] if i + 1 < len(lines) else ""
+                next_next = lines[i + 2] if i + 2 < len(lines) else ""
+
+                # Check if next line is empty and line after has caption
+                caption_match = None
+                skip_lines = 0
+
+                if next_line.strip() == '' and next_next.strip():
+                    caption_match = re.match(r'\s*(Figure|Photo|Image|Illustration|Schéma|Graphique)\s+\d+\s*[:\-–—]?\s*(.+)', next_next, re.IGNORECASE)
+                    skip_lines = 2
+                elif next_line.strip().startswith(':'):
+                    caption_match = re.match(r'\s*:\s*(.+)', next_line)
+                    skip_lines = 1
+
+                if caption_match:
+                    image_call = image_match.group(1).lstrip('#')
+                    caption_text = caption_match.group(0).strip().lstrip(':').strip()
+
+                    if not in_table:
+                        # Create #figure() wrapper
+                        result.append(f'#figure(')
+                        result.append(f'  {image_call},')
+                        result.append(f'  caption: [{caption_text}]')
+                        result.append(')')
+                        i += skip_lines + 1
+                        continue
+                    else:
+                        # In table - keep as-is without #figure
+                        result.append(line)
+                        i += 1
+                        continue
+
+            result.append(line)
+            i += 1
+
+        return '\n'.join(result)
+
+    content = wrap_images_with_captions(content)
 
     # NOW add # prefix to remaining standalone images (not inside #figure())
     # This fixes images in table cells, table headers, and other standalone contexts
