@@ -1,0 +1,10 @@
+# Ignore test output files
+*_test.typ
+*_test.pdf
+conversion_log.txt
+
+# Ignore image backups created by optimization
+media/originals/
+
+# Ignore temporary PowerShell scripts (for .doc conversion on Windows)
+convert_temp.ps1
