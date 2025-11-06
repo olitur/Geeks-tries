@@ -710,13 +710,88 @@ def post_process_typst(content, doc_title="Document", doc_filename="document"):
 
     # Match caption: [text that might be malformed
     content = re.sub(r'caption:\s*\[([^\]]*(?:\\\][^\]]*)*)', fix_unclosed_caption, content)
-    
-    # Ensure all remaining image() calls have the # prefix (required for Typst)
-    # This fixes images in table cells, table headers, and other contexts
-    # Match image(" but not #image("
-    # Using negative lookbehind to avoid adding # where it already exists
-    # This pattern matches image(" preceded by space, [, (, newline, or start of string
-    content = re.sub(r'(?<![#a-zA-Z])image\("', r'#image("', content)
+
+    # IMPORTANT: Handle image+caption wrapping BEFORE adding # prefix to standalone images
+    # This ensures images inside #figure() don't get # prefix
+
+    # Handle image captions detected after images
+    # This is crucial: Pandoc often outputs standalone images followed by captions
+    # We need to wrap them in #figure() constructs
+
+    def convert_image_with_caption(match):
+        image_call = match.group(1)
+        # Remove # prefix if present (will be re-added for standalone images later)
+        image_call = image_call.lstrip('#')
+        caption_text = match.group(2).strip()
+        return f'#figure(\n  {image_call},\n  caption: [{caption_text}]\n)'
+
+    # Pattern 1: Image followed by ": caption text" (Pandoc list-style caption)
+    # #image(...)\n\n      : caption text
+    content = re.sub(
+        r'(#?image\("[^"]+",\s*width:\s*\d+%\))\s*\n\s*:\s*([^\n]+)',
+        convert_image_with_caption,
+        content
+    )
+
+    # Pattern 2: Image followed by "Figure X:" caption (most common)
+    # #image("media/image1.jpeg", width: 80%)
+    # \n
+    # Figure 1 : Caption text
+    content = re.sub(
+        r'(#?image\("[^"]+",\s*width:\s*\d+%\))\s*\n\s*\n\s*(Figure\s+\d+\s*[:\-–—]?\s*[^\n]+)',
+        convert_image_with_caption,
+        content,
+        flags=re.IGNORECASE
+    )
+
+    # Pattern 3: Image followed by other caption patterns like "Photo X:", "Image X:", etc.
+    content = re.sub(
+        r'(#?image\("[^"]+",\s*width:\s*\d+%\))\s*\n\s*\n\s*((Photo|Image|Illustration|Schéma|Graphique)\s+\d+\s*[:\-–—]?\s*[^\n]+)',
+        convert_image_with_caption,
+        content,
+        flags=re.IGNORECASE
+    )
+
+    # NOW add # prefix to remaining standalone images (not inside #figure())
+    # This fixes images in table cells, table headers, and other standalone contexts
+    # We need to be careful NOT to add # to images inside #figure()
+
+    # Strategy: Add # only to image() calls that are:
+    # 1. Not already prefixed with #
+    # 2. Not inside #figure() constructs
+
+    # Split content by #figure() blocks and only process non-figure parts
+    # This ensures images inside #figure() keep their non-# prefix
+
+    def add_hash_to_standalone_images(text):
+        """Add # prefix to image() calls, but NOT if they're inside #figure()"""
+        # Don't add # if preceded by #, or if we're in a figure context
+        # Check if image(" appears after "  " (indentation inside figure)
+        lines = text.split('\n')
+        result = []
+        in_figure = False
+        figure_depth = 0
+
+        for line in lines:
+            # Track if we're inside a #figure() block
+            if '#figure(' in line:
+                in_figure = True
+                figure_depth = line.count('(') - line.count(')')
+            elif in_figure:
+                figure_depth += line.count('(') - line.count(')')
+                if figure_depth <= 0:
+                    in_figure = False
+
+            # Only add # to image() if we're NOT inside a figure
+            if not in_figure and 'image("' in line and '#image("' not in line:
+                # Add # to image(" if not already present
+                line = re.sub(r'(?<![#a-zA-Z])image\("', r'#image("', line)
+
+            result.append(line)
+
+        return '\n'.join(result)
+
+    content = add_hash_to_standalone_images(content)
 
     # Convert Greek letters and special math symbols to Typst equivalents
     # Map Unicode Greek letters to Typst math mode
@@ -741,21 +816,6 @@ def post_process_typst(content, doc_title="Document", doc_filename="document"):
 
     for greek_char, typst_equiv in greek_map.items():
         content = content.replace(greek_char, typst_equiv)
-
-    # Handle image captions detected after images (": caption text" pattern)
-    # Pattern: image(...)\n\n      : caption text
-    # Convert to: #figure(image(...), caption: [caption text])
-    def convert_image_with_caption(match):
-        image_call = match.group(1)
-        caption_text = match.group(2).strip()
-        return f'#figure(\n  {image_call},\n  caption: [{caption_text}]\n)'
-
-    # Match image followed by caption on next lines with ": " prefix
-    content = re.sub(
-        r'(#?image\("[^"]+",\s*width:\s*\d+%\))\s*\n\s*:\s*([^\n]+)',
-        convert_image_with_caption,
-        content
-    )
 
     # Remove redundant table cell alignments
     # When table has global align: (center,center,...), individual table.cell(align: center) is redundant
