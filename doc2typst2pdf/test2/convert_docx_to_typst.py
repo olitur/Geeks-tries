@@ -672,6 +672,51 @@ def post_process_typst(content, doc_title="Document", doc_filename="document"):
     content = re.sub(r'image\("([^"]+)\.wmf"', r'image("\1.png"', content)
     content = re.sub(r'image\("([^"]+)\.gif"', r'image("\1.png"', content)
 
+    # CRITICAL: Remove #figure() wrappers around tables
+    # Pattern: #figure(\n  align(center)[#table( ... )]\n) -> align(center)[#table( ... )]
+    # This is invalid Typst - tables are not figures
+    content = re.sub(
+        r'#figure\(\s*\n\s*(align\(center\)\[#table\()',
+        r'\1',
+        content
+    )
+    # Also remove the closing ) that matches the removed #figure(
+    # This is tricky - we need to track nesting. For now, use a simpler heuristic:
+    # Look for patterns like ")\n  )\n)" at end of table structures
+    content = re.sub(
+        r'(\]\))\s*\n\s*,?\s*kind:\s*table\s*\n\s*\)',
+        r'\1',
+        content
+    )
+
+    # CRITICAL: Remove #figure() blocks that are inside table cells
+    # Pattern: [#figure(\n  #image(...),\n  caption: [...])\n] -> [#image(...)\n\ncaption text]
+    # These are invalid - #figure() cannot be inside table cells
+    def remove_figure_from_table_cell(match):
+        """Extract image and caption from #figure() inside table cell"""
+        figure_block = match.group(0)
+
+        # Extract image path and caption
+        image_match = re.search(r'#?image\("([^"]+)"[^)]*\)', figure_block)
+        caption_match = re.search(r'caption:\s*\[([^\]]+)\]', figure_block)
+
+        if image_match and caption_match:
+            image_path = image_match.group(1)
+            caption_text = caption_match.group(1)
+            # Return just image and caption text without #figure wrapper
+            return f'[#image("{image_path}", width: 80%)\n\n{caption_text}\n]'
+        else:
+            # Can't parse - return original
+            return match.group(0)
+
+    # Match [#figure( ... )] patterns in table cells
+    content = re.sub(
+        r'\[#figure\(\s*\n\s*#?image\([^)]+\),\s*\n\s*caption:\s*\[[^\]]+\]\s*\n\s*\)\s*\n*\s*\]',
+        remove_figure_from_table_cell,
+        content,
+        flags=re.DOTALL
+    )
+
     # CRITICAL FIX: Remove # prefix from #image() when inside #figure()
     # This must be done BEFORE other image processing patterns
     # Images inside #figure() should be image(...), not #image(...)
