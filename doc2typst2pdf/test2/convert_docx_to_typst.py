@@ -621,6 +621,30 @@ def post_process_typst(content, doc_title="Document", doc_filename="document"):
         content
     )
 
+    # Remove #emph[] and #strong[] wrappers comprehensively
+    # These are unnecessary formatting that Pandoc adds excessively
+
+    # Pattern 1: In table cells - table.cell(...)[#emph[text]] -> table.cell(...)[text]
+    content = re.sub(r'\[#emph\[([^\]]+)\];?\]', r'[\1]', content)
+    content = re.sub(r'\[#strong\[([^\]]+)\];?\]', r'[\1]', content)
+
+    # Pattern 2: Standalone with semicolon - #emph[text]; -> text
+    content = re.sub(r'#emph\[([^\]]+)\];', r'\1', content)
+    content = re.sub(r'#strong\[([^\]]+)\];', r'\1', content)
+
+    # Pattern 3: In content (recursive to handle nested cases)
+    # Keep #emph and #strong when they're used for actual emphasis
+    # But remove excessive wrapping in lists and tables
+    # Only remove if inside table cells, lists, or excessive nesting
+    def clean_excessive_emph(text):
+        # Remove #emph[] around single lines in table cells or list items
+        text = re.sub(r'(\+\s+.*?)#emph\[([^\]]+)\]', r'\1\2', text)
+        # Remove from table cells that start with #emph
+        text = re.sub(r'(\s+\[)\s*#emph\[([^\]]+)\](\s*\],?)', r'\1\2\3', text)
+        return text
+
+    content = clean_excessive_emph(content)
+
     # Pattern 6: Fix standalone images followed by #emph captions
     # Sometimes Pandoc generates:
     # image("path", width: 80%)
@@ -648,33 +672,32 @@ def post_process_typst(content, doc_title="Document", doc_filename="document"):
     content = re.sub(r'image\("([^"]+)\.wmf"', r'image("\1.png"', content)
     content = re.sub(r'image\("([^"]+)\.gif"', r'image("\1.png"', content)
 
-    # First, fix #figure(#image(...)) to #figure(image(...))
-    # Images inside #figure() should NOT have the # prefix
-    # Handle both single-line and multi-line cases
-    content = re.sub(r'#figure\(\s*#image\(', r'#figure(image(', content, flags=re.MULTILINE)
-    # Also handle cases where #image is on the next line after #figure(
-    content = re.sub(r'#figure\(\s*\n\s*#image\(', r'#figure(\n  image(', content)
-    
-    # Fix #image inside #figure that appears on separate lines (common in table cells)
-    # Pattern: #figure(\n  #image( -> #figure(\n  image(
-    # This handles the multi-line formatting that Pandoc often generates
-    content = re.sub(
-        r'#figure\(\s*\n\s+#image\(',
-        r'#figure(\n  image(',
-        content
-    )
-    
-    # Also fix cases where there's whitespace: #figure(  #image(
-    content = re.sub(
-        r'#figure\(\s+#image\(',
-        r'#figure(image(',
-        content
-    )
+    # CRITICAL FIX: Remove # prefix from #image() when inside #figure()
+    # This must be done BEFORE other image processing patterns
+    # Images inside #figure() should be image(...), not #image(...)
+    # Handle all variations with different whitespace patterns
+
+    # Pattern 1: Same line - #figure(#image(
+    content = re.sub(r'#figure\(\s*#image\(', r'#figure(image(', content)
+
+    # Pattern 2: Next line with indentation - #figure(\n  #image(
+    content = re.sub(r'#figure\(\s*\n\s+#image\(', r'#figure(\n  image(', content)
+
+    # Pattern 3: With whitespace but same line - #figure(  #image(
+    content = re.sub(r'#figure\(\s+#image\(', r'#figure(image(', content)
+
+    # Pattern 4: Nested in align or other wrappers - align(...)[#table(...#image(
+    # This catches #image inside table cells within figures
+    content = re.sub(r'(\[|,)\s*#image\(', r'\1image(', content)
     
     # Fix malformed captions with \] escape sequences
     # Pattern: caption: [text, \] -> caption: [text]
     content = re.sub(r'caption:\s*\[([^\]]*),?\s*\\\]', r'caption: [\1]', content)
-    
+
+    # Fix double closing brackets in captions - caption: [text]]
+    # This commonly occurs when Pandoc incorrectly formats figure captions
+    content = re.sub(r'(caption:\s*\[[^\]]+)\]\]', r'\1]', content)
+
     # Fix unclosed caption brackets - if we have caption: [text without closing ]
     # This is a safety net for malformed captions
     def fix_unclosed_caption(match):
@@ -684,7 +707,7 @@ def post_process_typst(content, doc_title="Document", doc_filename="document"):
         # Remove trailing commas
         caption_text = caption_text.rstrip(', ')
         return f'caption: [{caption_text}]'
-    
+
     # Match caption: [text that might be malformed
     content = re.sub(r'caption:\s*\[([^\]]*(?:\\\][^\]]*)*)', fix_unclosed_caption, content)
     
