@@ -1,0 +1,623 @@
+---
+title: "Hyétogramme - La Pique à Bagnères-de-Luchon"
+subtitle: "Station [**`r rmarkdown::metadata$station$code`**]{.underline} - [**`r rmarkdown::metadata$station$name`**]{.underline} | Relation entre précipitations et niveau d'eau (2024)"
+author: "Olivier Turlier"
+lang: fr
+# NOTE: For PDF output, manually update this filepath with forward slashes (/)
+# Example: C:/Users/username/Documents/folder_name/file_name.pdf
+filepath: "C:/Users/oturl/Documents/geeks/Typst/article_quarto+typist/hyetogram_pique.pdf"
+code-annotations: hover
+theme: 
+  light: flatly
+  dark: darkly
+format:
+    html:
+      toc: true
+      toc-location: left
+      toc-depth: 3
+      link-external-icon: false
+      code-tools:
+        source: true
+        toggle: true
+        caption: "Afficher le code"
+      # other-links:
+      #   - text: "Version PDF"
+      #     href: hyetogram_pique.pdf
+      #     icon: file-pdf
+    typst:
+      output-file: "hyetogram_pique.pdf"
+      toc: true
+      template-partials:
+        - typst-show.typ
+        - typst-template.typ
+execute:
+  freeze: auto
+  warning: false
+  message: false
+station:
+  code: "O004402001"
+  name: "La Pique à Bagnères-de-Luchon"
+  latitude: 42.806
+  longitude: 0.605
+  department: "31"
+  region: "Haute-Garonne"
+---
+
+```{r}
+#| label: load-packages
+#| include: false
+library(tidyverse)
+library(lubridate)
+library(scales)
+library(zoo)
+library(leaflet)
+library(patchwork)
+library(plotly)
+library(sf)
+library(ggspatial)
+```
+
+## Station hydrométrique O004 4020 01
+
+**La Pique à Bagnères-de-Luchon** - Pyrénées, Haute-Garonne (31)
+
+Ce document présente l'analyse de la relation entre les précipitations et le niveau d'eau de la rivière La Pique au cours de l'année 2024.
+
+### Localisation de la station
+
+```{r}
+#| code-fold: true
+#| label: station-map
+#| echo: false
+#| out.width: "100%"
+#| fig.width: 6.3
+#| fig.height: 3.5
+
+# Read station metadata from YAML
+station_code <- rmarkdown::metadata$station$code
+station_name <- rmarkdown::metadata$station$name
+station_lat <- rmarkdown::metadata$station$latitude
+station_lon <- rmarkdown::metadata$station$longitude
+station_dept <- rmarkdown::metadata$station$department
+station_region <- rmarkdown::metadata$station$region
+
+# Check output format
+if (knitr::is_html_output()) {
+  # Interactive map for HTML using leaflet
+  leaflet() %>%
+    addTiles() %>%
+    addMarkers(
+      lng = station_lon,
+      lat = station_lat,
+      popup = paste0(
+        "<b>Station hydrométrique</b><br>",
+        "<b>Code:</b> ", station_code, "<br>",
+        "<b>Nom:</b> ", station_name, "<br>",
+        "<b>Localisation:</b> ", station_region, " (", station_dept, ")<br>",
+        "<hr style='margin: 5px 0;'>",
+        "<b>Coordonnées GPS:</b><br>",
+        "Latitude: ", station_lat, "° N<br>",
+        "Longitude: ", station_lon, "° E"
+      )
+    ) %>%
+    setView(lng = station_lon, lat = station_lat, zoom = 12)
+} else {
+  # Static map for PDF using ggplot2 + ggspatial
+
+  # Create a data frame for the station point
+  station_point <- data.frame(
+    lon = station_lon,
+    lat = station_lat,
+    name = station_name
+  )
+
+  # Convert to sf object with WGS84
+  station_sf <- st_as_sf(station_point, coords = c("lon", "lat"), crs = 4326)
+
+  # Transform to Web Mercator for better distance calculation
+  station_sf_mercator <- st_transform(station_sf, crs = 3857)
+
+  # Get coordinates and create buffer for map extent
+  coords <- st_coordinates(station_sf_mercator)
+  # Use different buffer for width (wider) vs height to fill page width
+  buffer_x <- 3000  # 3 km east-west
+  buffer_y <- 1700  # 1.7 km north-south (to match aspect ratio)
+
+  xlim <- c(coords[1] - buffer_x, coords[1] + buffer_x)
+  ylim <- c(coords[2] - buffer_y, coords[2] + buffer_y)
+
+  # Create static map
+  ggplot() +
+    annotation_map_tile(type = "osm", zoom = 14, progress = "none", cachedir = tempdir()) +
+    geom_sf(data = station_sf_mercator, color = "red", size = 6, shape = 19) +
+    geom_sf_text(data = station_sf_mercator, aes(label = name),
+                 nudge_y = 300, size = 4, fontface = "bold", color = "darkred",
+                 bg.color = "white", bg.r = 0.15) +
+    annotation_scale(location = "bl", width_hint = 0.25,
+                    pad_x = unit(0.5, "cm"), pad_y = unit(0.5, "cm"),
+                    text_cex = 1.2, line_width = 1.5,
+                    unit_category = "metric") +
+    annotation_north_arrow(location = "tr", which_north = "true",
+                          style = north_arrow_fancy_orienteering,
+                          height = unit(2, "cm"), width = unit(2, "cm"),
+                          pad_x = unit(0.3, "cm"), pad_y = unit(0.3, "cm")) +
+    coord_sf(crs = 3857, xlim = xlim, ylim = ylim, expand = FALSE) +
+    theme_void() +
+    labs(
+      caption = paste0("Station ", station_code, " - ",
+                      station_lat, "° N, ", station_lon, "° E")
+    ) +
+    theme(
+      plot.caption = element_text(hjust = 0.5, size = 10, margin = margin(t = 10)),
+      plot.background = element_rect(fill = "white", color = "black", linewidth = 1.5),
+      plot.margin = margin(10, 10, 10, 10),
+      aspect.ratio = NULL
+    )
+}
+```
+
+::: {.callout-note}
+## Sources des données
+
+**Données hydrométriques réelles** : [Hub'Eau API Hydrométrie](https://hubeau.eaufrance.fr/page/api-hydrometrie) - Station `r station_code`
+
+**Données pluviométriques réelles** :
+- [Météo-France Open Data](https://www.data.gouv.fr/) - Département `r station_dept` (`r station_region`)
+- [Meteoblue Bagnères-de-Luchon](https://www.meteoblue.com/fr/meteo/historyclimate/climatemodelled/bagn%C3%A8res-de-luchon_france_3035416)
+
+**Note** : Les données hydrométriques sont réelles (API Hub'Eau). Les données pluviométriques sont simulées à des fins de démonstration avec des patterns saisonniers réalistes pour les Pyrénées.
+:::
+
+## Collecte des données
+
+### Script Python de collecte automatique
+
+Le fichier `fetch_pique_data.py` permet de récupérer automatiquement les données hydrométriques depuis l'API Hub'Eau.
+
+**Utilisation pour la station actuelle :**
+
+```bash
+python fetch_pique_data.py
+```
+
+**Adaptation pour une autre station :**
+
+Pour utiliser ce script avec une autre station hydrométrique :
+
+1. Trouvez le code de votre station sur [Hydro Portail](https://hydro.eaufrance.fr/)
+2. Modifiez les paramètres dans le script :
+
+```python
+# Dans fetch_pique_data.py, ligne 14
+params = {
+    "code_entite": "O004402001",  # ← Remplacez par votre code station
+    "grandeur_hydro": "H",
+    "date_debut_obs_elab": "2024-01-01",
+    "date_fin_obs_elab": "2024-12-31",
+    "size": 5000
+}
+```
+
+3. Récupérez les coordonnées GPS de votre station sur la page de la station
+4. Mettez à jour les métadonnées YAML dans ce document :
+
+```yaml
+station:
+  code: "VOTRE_CODE_STATION"
+  name: "Nom de la rivière et localisation"
+  latitude: 42.806  # ← Votre latitude
+  longitude: 0.603  # ← Votre longitude
+  department: "XX"  # ← Code département
+  region: "Nom région"
+```
+
+**Exemple pour une autre station :**
+
+Pour la station "La Garonne à Toulouse" (code O205101001) :
+
+```yaml
+station:
+  code: "O205101001"
+  name: "La Garonne à Toulouse"
+  latitude: 43.604
+  longitude: 1.444
+  department: "31"
+  region: "Haute-Garonne"
+```
+
+Le script et tous les graphiques s'adapteront automatiquement aux nouvelles métadonnées.
+
+### Structure des données
+
+Le fichier CSV généré contient trois colonnes :
+
+- `date` : Date au format YYYY-MM-DD
+- `water_level_m` : Niveau d'eau en mètres (données réelles Hub'Eau)
+- `rainfall_mm` : Précipitations en millimètres (simulées)
+
+**Aperçu des premières lignes du fichier CSV :**
+
+```{r}
+#| code-fold: true
+#| label: csv-preview
+#| echo: true
+#| tbl-colwidths: [30,35,35]
+
+# Lire les premières lignes du CSV
+csv_preview <- read_csv("pique_data_2024.csv", show_col_types = FALSE) %>%
+  head(10)
+
+knitr::kable(csv_preview,
+             caption = "Aperçu des 10 premières lignes du fichier pique_data_2024.csv",
+             digits = 3,
+             format.args = list(big.mark = ""))
+```
+
+### Lecture et préparation des données
+
+```{r}
+#| code-fold: true
+#| label: load-data
+#| echo: true
+
+# Charger les données
+data <- read_csv("pique_data_2024.csv", show_col_types = FALSE) %>%
+  mutate(
+    date = as.Date(date),
+    month = month(date, label = TRUE, abbr = TRUE),
+    water_level_median = rollmedian(water_level_m, k = 7, fill = NA, align = "center")
+  )
+
+# Afficher un aperçu
+glimpse(data)
+```
+
+### Statistiques descriptives
+
+```{r}
+#| code-fold: true
+#| label: stats
+#| echo: true
+
+summary_stats <- data %>%
+  summarise(
+    `Niveau d'eau moyen (m)` = round(mean(water_level_m, na.rm = TRUE), 2),
+    `Niveau d'eau max (m)` = round(max(water_level_m, na.rm = TRUE), 2),
+    `Niveau d'eau min (m)` = round(min(water_level_m, na.rm = TRUE), 2),
+    `Précipitation totale (mm)` = round(sum(rainfall_mm, na.rm = TRUE), 1),
+    `Précipitation moyenne (mm/jour)` = round(mean(rainfall_mm, na.rm = TRUE), 1)
+  )
+
+knitr::kable(summary_stats, caption = "Statistiques annuelles 2024")
+```
+
+### Hyétogramme
+
+L'hyétogramme ci-dessous montre :
+
+- **Graphique du haut** : Précipitations journalières (barres grises pointant vers le bas)
+- **Graphique du bas** : Niveau d'eau journalier (barres bleues) et médiane mobile sur 7 jours (courbe bleue)
+
+```{r}
+#| code-fold: true
+#| label: hyetogram
+#| echo: true
+#| fig.width: 12
+#| fig.height: 8
+#| out.width: "100%"
+
+if (knitr::is_html_output()) {
+  # Version interactive avec plotly pour HTML
+
+  # Graphique des précipitations (inversé)
+  fig_rain <- plot_ly(data, x = ~date, y = ~(-rainfall_mm), type = 'bar',
+                      marker = list(color = 'rgba(128, 128, 128, 0.6)'),
+                      name = 'Précipitations',
+                      hovertemplate = paste('<b>%{x|%Y-%m-%d}</b><br>',
+                                           'Précipitations: %{customdata} mm<extra></extra>'),
+                      customdata = ~rainfall_mm) %>%
+    layout(yaxis = list(title = 'Précipitations (mm)',
+                        tickformat = ',d',
+                        tickvals = seq(-60, 0, 10),
+                        ticktext = seq(60, 0, -10),
+                        showgrid = TRUE,
+                        gridcolor = 'rgba(128, 128, 128, 0.2)'),
+           xaxis = list(title = '', showticklabels = FALSE),
+           margin = list(t = 80, b = 0))
+
+  # Graphique du niveau d'eau
+  fig_water <- plot_ly(data) %>%
+    add_bars(x = ~date, y = ~water_level_m,
+             marker = list(color = 'rgba(70, 130, 180, 0.7)'),
+             name = 'Niveau d\'eau',
+             hovertemplate = paste('<b>%{x|%Y-%m-%d}</b><br>',
+                                  'Niveau: %{y:.3f} m<extra></extra>')) %>%
+    add_lines(x = ~date, y = ~water_level_median,
+              line = list(color = 'rgb(0, 0, 139)', width = 2),
+              name = 'Médiane mobile (7j)',
+              hovertemplate = paste('<b>%{x|%Y-%m-%d}</b><br>',
+                                   'Médiane: %{y:.3f} m<extra></extra>')) %>%
+    layout(yaxis = list(title = 'Niveau d\'eau (m)',
+                        showgrid = TRUE,
+                        gridcolor = 'rgba(128, 128, 128, 0.2)'),
+           xaxis = list(title = 'Mois'),
+           margin = list(t = 0, b = 50))
+
+  # Combiner les deux graphiques
+  subplot(fig_rain, fig_water,
+          nrows = 2,
+          heights = c(0.4, 0.6),
+          shareX = TRUE) %>%
+    layout(title = list(text = "Hyétogramme - La Pique à Bagnères-de-Luchon (2024)",
+                       font = list(size = 16, family = "Arial", weight = "bold"),
+                       y = 0.98,
+                       yanchor = "top"),
+           showlegend = TRUE,
+           legend = list(orientation = "h",
+                        yanchor = "bottom",
+                        y = 1.02,
+                        xanchor = "center",
+                        x = 0.5),
+           hovermode = 'x unified',
+           plot_bgcolor = 'white',
+           paper_bgcolor = 'white',
+           margin = list(t = 100, b = 50, l = 60, r = 30))
+
+} else {
+  # Version statique avec ggplot pour PDF
+
+  # Graphique des précipitations (inversé - pointant vers le bas)
+  p_rain <- ggplot(data, aes(x = date)) +
+    geom_col(aes(y = -rainfall_mm),
+             fill = "gray50", alpha = 0.6, width = 1) +
+    scale_y_continuous(
+      name = "Précipitations (mm)",
+      labels = function(x) abs(x),
+      expand = c(0, 0)
+    ) +
+    scale_x_date(
+      date_breaks = "1 month",
+      date_labels = "%b",
+      expand = c(0.01, 0)
+    ) +
+    labs(
+      title = "Hyétogramme - La Pique à Bagnères-de-Luchon (2024)",
+      subtitle = "Relation entre précipitations et niveau d'eau de la rivière",
+      x = NULL
+    ) +
+    theme_minimal(base_size = 13) +
+    theme(
+      plot.title = element_text(face = "bold", size = 16),
+      plot.subtitle = element_text(size = 12, color = "gray30"),
+      axis.title.y = element_text(color = "gray40", face = "bold"),
+      axis.text.y = element_text(color = "gray40"),
+      axis.text.x = element_blank(),
+      panel.background = element_rect(fill = "white", color = NA),
+      plot.background = element_rect(fill = "white", color = NA),
+      panel.grid.major.x = element_line(color = "gray85", size = 0.3),
+      panel.grid.minor.x = element_blank(),
+      panel.grid.major.y = element_line(color = "gray85", size = 0.3, linetype = "dashed"),
+      plot.margin = margin(5, 5, 0, 5)
+    )
+
+  # Graphique du niveau d'eau
+  p_water <- ggplot(data, aes(x = date)) +
+    geom_col(aes(y = water_level_m),
+             fill = "steelblue", alpha = 0.7, width = 1) +
+    geom_line(aes(y = water_level_median),
+              color = "darkblue", linewidth = 1, na.rm = TRUE) +
+    scale_y_continuous(
+      name = "Niveau d'eau (m)",
+      expand = c(0, 0)
+    ) +
+    scale_x_date(
+      date_breaks = "1 month",
+      date_labels = "%b",
+      expand = c(0.01, 0)
+    ) +
+    labs(
+      x = "Mois",
+      caption = "Source: Station hydrométrique O004402001 | Données hydrométriques réelles (Hub'Eau API)"
+    ) +
+    theme_minimal(base_size = 13) +
+    theme(
+      axis.title.y = element_text(color = "steelblue", face = "bold"),
+      axis.text.y = element_text(color = "steelblue"),
+      panel.background = element_rect(fill = "white", color = NA),
+      plot.background = element_rect(fill = "white", color = NA),
+      panel.grid.major.x = element_line(color = "gray85", size = 0.3),
+      panel.grid.minor.x = element_blank(),
+      panel.grid.major.y = element_line(color = "gray85", size = 0.3, linetype = "dashed"),
+      plot.caption = element_text(hjust = 0, face = "italic", size = 9),
+      plot.margin = margin(0, 5, 5, 5)
+    )
+
+  # Combiner les deux graphiques verticalement
+  p_rain / p_water + plot_layout(heights = c(1, 1.5))
+}
+```
+
+### Analyse de corrélation
+
+Analysons la corrélation entre les précipitations et le niveau d'eau avec un décalage temporel (lag) pour tenir compte du temps de réponse hydrologique.
+
+```{r}
+#| code-fold: true
+#| label: correlation-analysis
+#| echo: true
+
+# Calculer la corrélation avec différents lags (délais)
+lags <- 0:7  # De 0 à 7 jours de délai
+
+correlations <- sapply(lags, function(lag) {
+  if (lag == 0) {
+    cor(data$rainfall_mm, data$water_level_m, use = "complete.obs")
+  } else {
+    cor(data$rainfall_mm[1:(nrow(data)-lag)],
+        data$water_level_m[(1+lag):nrow(data)],
+        use = "complete.obs")
+  }
+})
+
+cor_df <- data.frame(
+  Délai_jours = lags,
+  Corrélation = round(correlations, 3)
+)
+
+knitr::kable(cor_df, caption = "Corrélation entre précipitations et niveau d'eau selon le délai")
+```
+
+```{r}
+#| code-fold: true
+#| label: correlation-plot
+#| echo: true
+#| fig.width: 8
+#| fig.height: 4
+
+ggplot(cor_df, aes(x = Délai_jours, y = Corrélation)) +
+  geom_line(color = "steelblue", size = 1.5) +
+  geom_point(color = "darkblue", size = 3) +
+  geom_hline(yintercept = 0, linetype = "dashed", color = "gray50") +
+  scale_x_continuous(breaks = lags) +
+  labs(
+    title = "Corrélation pluie-niveau d'eau selon le délai de réponse",
+    x = "Délai (jours)",
+    y = "Coefficient de corrélation",
+    caption = "Le pic de corrélation indique le temps de réponse optimal du bassin versant"
+  ) +
+  theme_minimal(base_size = 12) +
+  theme(
+    plot.title = element_text(face = "bold"),
+    plot.caption = element_text(hjust = 0, face = "italic", size = 9)
+  )
+```
+
+### Événements pluvieux majeurs
+
+Identifions les principaux événements pluvieux (> 25 mm) et leur impact sur le niveau d'eau :
+
+```{r}
+#| code-fold: true
+#| label: major-events
+#| echo: true
+
+
+major_events <- data %>%
+  filter(rainfall_mm > 25) %>%
+  select(
+    Date = date,
+    `Précipitations (mm)` = rainfall_mm,
+    `Niveau d'eau (m)` = water_level_m
+  ) %>%
+  arrange(desc(`Précipitations (mm)`))
+
+knitr::kable(major_events, caption = "Événements pluvieux majeurs (> 25 mm)")
+```
+
+### Variation saisonnière
+
+```{r}
+#| code-fold: true
+#| label: seasonal-analysis
+#| echo: true
+#| fig.width: 10
+#| fig.height: 5
+
+monthly_summary <- data %>%
+  group_by(month) %>%
+  summarise(
+    `Niveau d'eau moyen (m)` = mean(water_level_m, na.rm = TRUE),
+    `Précipitations totales (mm)` = sum(rainfall_mm, na.rm = TRUE)
+  )
+
+# Plot avec deux axes
+ggplot(monthly_summary, aes(x = month)) +
+  geom_col(aes(y = `Précipitations totales (mm)` / 100),
+           fill = "gray50", alpha = 0.6) +
+  geom_line(aes(y = `Niveau d'eau moyen (m)`, group = 1),
+            color = "steelblue", size = 1.5) +
+  geom_point(aes(y = `Niveau d'eau moyen (m)`),
+             color = "darkblue", size = 3) +
+  scale_y_continuous(
+    name = "Niveau d'eau moyen (m)",
+    sec.axis = sec_axis(trans = ~ . * 100, name = "Précipitations totales (mm)")
+  ) +
+  labs(
+    title = "Variations saisonnières du niveau d'eau et des précipitations",
+    x = "Mois",
+    caption = "Barres : précipitations mensuelles | Ligne : niveau d'eau moyen mensuel"
+  ) +
+  theme_minimal(base_size = 12) +
+  theme(
+    plot.title = element_text(face = "bold"),
+    axis.title.y.left = element_text(color = "steelblue", face = "bold"),
+    axis.title.y.right = element_text(color = "gray40", face = "bold"),
+    plot.caption = element_text(hjust = 0, face = "italic", size = 9)
+  )
+```
+
+## Conclusions
+
+L'hyétogramme montre clairement la relation entre les précipitations et le niveau d'eau de La Pique :
+
+1. **Temps de réponse** : Le bassin versant répond généralement aux précipitations avec un délai de quelques heures à quelques jours
+2. **Variabilité saisonnière** : Les niveaux d'eau les plus élevés sont observés en hiver et au printemps
+3. **Événements extrêmes** : Les fortes précipitations (> 25 mm) entraînent des augmentations significatives du niveau d'eau
+
+Cette analyse permet de mieux comprendre la dynamique hydrologique du bassin versant de La Pique dans les Pyrénées.
+
+---
+
+## Colophon
+
+### À propos de ce document
+
+Ce document est généré automatiquement à partir d'une source unique [Quarto](https://quarto.org/){target="_blank"} produisant deux formats de sortie :
+
+- **HTML** : Version interactive avec cartes Leaflet et graphiques Plotly
+- **PDF** : Version statique avec mise en page Typst personnalisée
+
+### Chaîne de production (toolchain)
+
+**Langages et outils** :
+
+- [R](https://www.r-project.org/){target="_blank"} (version 4.5.0) - Analyse statistique et visualisation
+- [Python](https://www.python.org/){target="_blank"} (version 3.x) - Collecte de données via API Hub'Eau
+- [Quarto](https://quarto.org/){target="_blank"} (CLI) - Génération de documents multi-formats
+- [Typst](https://typst.app/){target="_blank"} (version 0.13) - Composition typographique pour PDF
+
+**Packages R utilisés** :
+
+- `tidyverse` - Manipulation et transformation de données
+- `ggplot2` - Graphiques statiques (PDF)
+- `plotly` - Graphiques interactifs (HTML)
+- `leaflet` - Cartes interactives (HTML)
+- `sf` & `ggspatial` - Cartographie statique (PDF)
+- `lubridate` - Gestion des dates
+- `patchwork` - Composition de graphiques
+
+**Environnement de développement** :
+
+- [Visual Studio Code](https://code.visualstudio.com/){target="_blank"} avec extensions :
+  - **R Extension for Visual Studio Code** - Support du langage R
+  - **Quarto Extension** - Prévisualisation et rendu Quarto
+  - **PDF Viewer** - Visualisation des PDF
+  - **French Language Pack** - Interface en français
+  - **Code Spell Checker (French)** - Vérification orthographique
+
+### Sources des données
+
+- **API Hub'Eau Hydrométrie** : [https://hubeau.eaufrance.fr/](https://hubeau.eaufrance.fr/){target="_blank"}
+- **Script de collecte** : `fetch_pique_data.py` (Python)
+
+### License et reproduction
+
+Ce document est un exemple de rapport hydrologique reproductible. Pour adapter ce modèle à une autre station :
+
+1. Modifiez les métadonnées `station` dans l'en-tête YAML
+2. Exécutez `fetch_pique_data.py` avec le nouveau code station
+3. Régénérez avec `quarto render hyetogram_pique.qmd`
+
+---
+
+*Document généré le `r format(Sys.Date(), "%d %B %Y")` avec Quarto `r quarto::quarto_version()` et R `r getRversion()`*
