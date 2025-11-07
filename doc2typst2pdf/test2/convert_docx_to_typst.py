@@ -494,7 +494,7 @@ def post_process_typst(content, doc_title="Document", doc_filename="document"):
 
 // Configuration du texte (Atkinson Hyperlegible prioritaire, Arial et polices actuelles en fallback, 11pt)
 #set text(
-  font: ("Atkinson Hyperlegible", "Arial", "Liberation Sans", "DejaVu Sans"),
+  font: ("Atkinson Hyperlegible", "Arial", "DejaVu Sans", "FreeSans", "Liberation Sans"),
   size: 11pt,
   lang: "fr",
   region: "FR"
