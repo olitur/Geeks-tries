@@ -741,7 +741,15 @@ def post_process_typst(content, doc_title="Document", doc_filename="document"):
 
     # Fix double closing brackets in captions - caption: [text]]
     # This commonly occurs when Pandoc incorrectly formats figure captions
+    # Use DOTALL to handle multi-line captions
     content = re.sub(r'(caption:\s*\[[^\]]+)\]\]', r'\1]', content)
+
+    # Additional fix: Handle cases where ]] appears on its own line after a figure
+    # Pattern: )\n]] -> )\n
+    content = re.sub(r'\)\s*\n\s*\]\]', r')', content)
+
+    # Fix triple or more closing brackets
+    content = re.sub(r'\]\]\]+', r']', content)
 
     # Fix unclosed caption brackets - if we have caption: [text without closing ]
     # This is a safety net for malformed captions
@@ -866,6 +874,14 @@ def post_process_typst(content, doc_title="Document", doc_filename="document"):
         return '\n'.join(result)
 
     content = add_hash_to_standalone_images(content)
+
+    # CRITICAL: Final bracket cleanup after wrap_images_with_captions
+    # Handle cases where ]] appears after figure blocks (Windows Pandoc quirk)
+    # Be specific to avoid breaking legitimate ]] in links
+    content = re.sub(r'(caption:\s*\[[^\]]+)\]\]', r'\1]', content)  # caption: [text]]
+    content = re.sub(r'\)\s*\n\s*\]\]\s*\n', r')\n', content)  # )\n]]\n -> )\n
+    content = re.sub(r'\)\s*\n\s*\]\]\s*$', r')', content, flags=re.MULTILINE)  # )\n]] at end of line
+    content = re.sub(r'^\s*\]\]\s*$', '', content, flags=re.MULTILINE)  # Standalone ]] on its own line
 
     # Convert Greek letters and special math symbols to Typst equivalents
     # Map Unicode Greek letters to Typst math mode
