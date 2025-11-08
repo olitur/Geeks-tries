@@ -1,30 +1,29 @@
 // ============================================================
 // Recette : Madeleines au beurre
 // ============================================================
-// Pure Typst - reads metadata from informations_madeleines.txt
+// Ce fichier lit automatiquement les données depuis informations_madeleines.txt
 // ============================================================
 
 #import "../assets/style/style_recettes.typ": *
-#import "../assets/style/parse_recipe.typ": parse_recipe_file
+#import "../assets/style/parser.typ": parse-recipe-file
+
+// Charger les données de la recette
+#let recipe = parse-recipe-file("../../Madeleines/informations_madeleines.txt")
 
 // ============================================================
-// LOAD RECIPE DATA
+// RECETTE
 // ============================================================
 
-#let recipe = parse_recipe_file("/Madeleines/informations_madeleines.txt")
-#let recipe_image = "/Madeleines/images/madeleines_au_citron.jpg"
+#recipe_title(
+  recipe.name,
+  "../../Madeleines/images/madeleines_au_citron.jpg"
+)
 
-// ============================================================
-// RECIPE DOCUMENT
-// ============================================================
-
-#recipe_title(recipe.name, recipe_image)
-
-// IngrÃ©dients
+// Ingrédients
 #ingredients_section(recipe.ingredients)
 
-// PrÃ©paration
-#preparation_section(recipe.preparation_steps)
+// Préparation
+#preparation_section(recipe.steps)
 
 // Cuisson
 #if recipe.cooking.time != none [
@@ -49,22 +48,22 @@
 // EXERCICES POUR LES ENFANTS
 // ============================================================
 
-= ActivitÃ©s ludiques
+= Activités ludiques
 
 #exercise_box(
-  "Compte les ingrÃ©dients",
+  "Compte les ingrédients",
   [
-    Combien d'ingrÃ©dients diffÃ©rents utilise-t-on pour cette recette ?
+    Combien d'ingrédients différents utilise-t-on pour cette recette ?
 
     #v(1em)
-    RÃ©ponse : \_\_\_\_\_\_\_
+    Réponse : \_\_\_\_\_\_\_
   ]
 )
 
 #exercise_box(
-  "Les Ã©tapes de prÃ©paration",
+  "Les étapes de préparation",
   [
-    Dessine les 3 Ã©tapes principales de la prÃ©paration :
+    Dessine les 3 étapes principales de la préparation :
 
     #v(1em)
     #grid(
@@ -72,17 +71,17 @@
       column-gutter: 1em,
       [
         #box(height: 6cm, width: 100%, stroke: 1pt + gray, radius: 0.3em)[
-          #align(center + horizon)[Ãtape 1]
+          #align(center + horizon)[Étape 1]
         ]
       ],
       [
         #box(height: 6cm, width: 100%, stroke: 1pt + gray, radius: 0.3em)[
-          #align(center + horizon)[Ãtape 2]
+          #align(center + horizon)[Étape 2]
         ]
       ],
       [
         #box(height: 6cm, width: 100%, stroke: 1pt + gray, radius: 0.3em)[
-          #align(center + horizon)[Ãtape 3]
+          #align(center + horizon)[Étape 3]
         ]
       ]
     )
@@ -90,22 +89,63 @@
 )
 
 #fun_fact[
-  Sais-tu que les madeleines sont devenues cÃ©lÃ¨bres grÃ¢ce Ã  l'Ã©crivain Marcel Proust ? Dans son livre, il raconte comment le goÃ»t d'une madeleine trempÃ©e dans du thÃ© lui rappelle ses souvenirs d'enfance !
+  Sais-tu que la cuisine est une science ? Quand tu mélanges les ingrédients et que tu les chauffes, des réactions chimiques se produisent ! C'est ce qui donne le bon goût et la belle forme à tes gâteaux.
 ]
 
 #exercise_box(
   "Calcul gourmand",
   [
-    Si la recette est pour 6 personnes, combien faut-il d'ingrÃ©dients pour 12 personnes ?
+    Si la recette est pour #recipe.serving.persons, combien faut-il d'ingrédients pour le double de personnes ?
 
     #v(0.5em)
-    _Multiplie chaque quantitÃ© par 2 !_
+    _Multiplie chaque quantité par 2 !_
+
+    #v(1em)
+    #grid(
+      columns: (2fr, 1fr, 1fr),
+      row-gutter: 0.5em,
+      align: (left, center, center),
+      [*Ingrédient*], [*Quantité×1*], [*Quantité×2*],
+      ..for ing in recipe.ingredients {
+        (
+          [#ing.name],
+          [#ing.quantity],
+          [\_\_\_\_\_\_],
+        )
+      }.flatten()
+    )
   ]
 )
 
 #tips_box[
-  N'oublie pas de toujours demander l'aide d'un adulte pour utiliser le four ! =h
-=i
-=g
-=f
+  N'oublie pas de toujours demander l'aide d'un adulte pour utiliser le four ! 👨‍👩‍👧‍👦
+]
+
+#pagebreak()
+
+= Notes et astuces
+
+#v(1em)
+
+#tips_box[
+  *Astuce du chef :* Pour des madeleines bien bombées, laisse reposer la pâte au réfrigérateur pendant au moins 1 heure avant la cuisson.
+]
+
+#fun_fact[
+  Les madeleines sont originaires de Lorraine, en France. Elles sont célèbres grâce à l'écrivain Marcel Proust qui les mentionne dans son livre "À la recherche du temps perdu" !
+]
+
+// Vérifications pendant et après cuisson
+#if recipe.cooking.verification_during != none or recipe.cooking.verification_end != none [
+  == ✓ Vérifications importantes
+
+  #if recipe.cooking.verification_during != none [
+    *Pendant la cuisson :* #recipe.cooking.verification_during
+  ]
+
+  #v(0.5em)
+
+  #if recipe.cooking.verification_end != none [
+    *En fin de cuisson :* #recipe.cooking.verification_end
+  ]
 ]

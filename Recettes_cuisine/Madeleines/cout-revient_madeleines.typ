@@ -1,17 +1,14 @@
 // ============================================================
 // Coût de revient : Madeleines au beurre
 // ============================================================
-// Pure Typst - reads metadata from informations_madeleines.txt
+// Ce fichier lit automatiquement les données depuis informations_madeleines.txt
 // ============================================================
 
 #import "../assets/style/style_recettes.typ": *
-#import "../assets/style/parse_recipe.typ": parse_recipe_file
+#import "../assets/style/parser.typ": parse-recipe-file, extract-price-value, format-price
 
-// ============================================================
-// LOAD RECIPE DATA
-// ============================================================
-
-#let recipe = parse_recipe_file("/Madeleines/informations_madeleines.txt")
+// Charger les données de la recette
+#let recipe = parse-recipe-file("../../Madeleines/informations_madeleines.txt")
 
 // ============================================================
 // COST ANALYSIS DOCUMENT
@@ -56,52 +53,83 @@
   // Header
   [*Ingrédient*], [*Quantité achetée*], [*Prix d'achat*], [*Quantité utilisée*], [*Coût*],
 
-  // Ingredient rows
-  ..recipe.ingredients.map(ing => (
-    [#ing.name],
-    [#ing.bulk_quantity],
-    [#ing.bulk_price],
-    [#ing.quantity],
-    [*#ing.cost*]
-  )).flatten()
+  // Rows
+  ..for ing in recipe.ingredients {
+    (
+      [#ing.name],
+      [#ing.at("bulk_quantity", default: "—")],
+      [#ing.at("bulk_price", default: "—")],
+      [#ing.quantity],
+      [*#ing.at("cost", default: "—")*],
+    )
+  }.flatten()
 )
 
 = Résumé des coûts
 
 #cost_table(
   recipe.ingredients,
-  energy_cost: recipe.energy_cost,
-  total: recipe.total_cost
+  energy_cost: recipe.prices.energy,
+  total: recipe.prices.total
 )
 
-// Cost per person (if serving info available)
+// Cost per serving
 #if recipe.serving.persons != none [
   = Coût par personne
 
-  #let persons_str = recipe.serving.persons
-  #let persons_num = int(persons_str.split(" ").at(0))
-  #let total_str = recipe.total_cost.replace("¬", "").replace(",", ".").trim()
+  #let persons-match = recipe.serving.persons.match(regex("(\\d+)"))
+  #if persons-match != none [
+    #let persons = int(persons-match.captures.at(0))
+    #let total-val = extract-price-value(recipe.prices.total)
+    #let cost-per-person = total-val / persons
 
-  // Simple division display
-  #align(center)[
-    #box(
-      fill: green.lighten(80%),
-      stroke: 2pt + green,
-      radius: 0.8em,
-      inset: 1.5em,
-    )[
-      #text(size: 18pt, weight: "bold", fill: green)[
-        #recipe.total_cost ÷ #persons_num personnes
+    #align(center)[
+      #box(
+        fill: green.lighten(80%),
+        stroke: 2pt + green,
+        radius: 0.8em,
+        inset: 1.5em,
+      )[
+        #text(size: 18pt, weight: "bold", fill: green)[
+          #format-price(cost-per-person) par personne
+        ]
       ]
     ]
-  ]
 
-  #v(1em)
+    #v(1em)
+  ]
 ]
 
-= Astuces pour économiser
+#if recipe.serving.items != none [
+  = Coût par pièce
+
+  #let items-match = recipe.serving.items.match(regex("(\\d+)"))
+  #if items-match != none [
+    #let items = int(items-match.captures.at(0))
+    #let total-val = extract-price-value(recipe.prices.total)
+    #let cost-per-item = total-val / items
+
+    #align(center)[
+      #box(
+        fill: orange.lighten(85%),
+        stroke: 2pt + orange,
+        radius: 0.8em,
+        inset: 1.5em,
+      )[
+        #text(size: 16pt, weight: "bold", fill: orange)[
+          #format-price(cost-per-item) par pièce
+        ]
+      ]
+    ]
+
+    #v(1em)
+  ]
+]
+
+= Économies potentielles
 
 #tips_box[
+  *Comment réduire le coût :*
   - Acheter les ingrédients en plus grande quantité permet souvent de réduire le coût unitaire
   - Comparer les prix entre différents magasins
   - Privilégier les produits de saison
@@ -111,3 +139,59 @@
 #fun_fact[
   En cuisinant toi-même, tu économises souvent 50% par rapport aux produits tout faits du commerce !
 ]
+
+= Analyse économique
+
+#let total-val = extract-price-value(recipe.prices.total)
+
+#grid(
+  columns: (1fr, 1fr),
+  column-gutter: 1em,
+  row-gutter: 1em,
+
+  // Box 1: Ingredient breakdown
+  box(
+    fill: rgb("#fff5eb"),
+    stroke: 1pt + orange,
+    radius: 0.5em,
+    inset: 1em,
+  )[
+    #align(center)[
+      #text(weight: "bold", fill: orange)[📊 Répartition des coûts]
+    ]
+    #v(0.5em)
+
+    #let ing-costs = ()
+    #for ing in recipe.ingredients [
+      #if "cost" in ing and ing.cost != none [
+        #let val = extract-price-value(ing.cost)
+        #let percentage = if total-val > 0 { calc.round(val / total-val * 100, digits: 1) } else { 0 }
+        - *#ing.name* : #str(percentage)% \
+      ]
+    ]
+  ],
+
+  // Box 2: Energy cost
+  box(
+    fill: rgb("#e8f5e9"),
+    stroke: 1pt + green,
+    radius: 0.5em,
+    inset: 1em,
+  )[
+    #align(center)[
+      #text(weight: "bold", fill: green)[⚡ Coût énergétique]
+    ]
+    #v(0.5em)
+
+    #if recipe.prices.energy != none [
+      Électricité (four) : *#recipe.prices.energy*
+
+      #let energy-val = extract-price-value(recipe.prices.energy)
+      #let percentage = if total-val > 0 { calc.round(energy-val / total-val * 100, digits: 1) } else { 0 }
+
+      Soit #str(percentage)% du coût total
+    ] else [
+      _Non renseigné_
+    ]
+  ]
+)
