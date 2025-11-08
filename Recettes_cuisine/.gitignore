@@ -4,3 +4,7 @@
 
 # Ignore questions to IA
 # Questions_to-IA.md
+
+# Generated PDFs (keep only MANUAL versions)
+*.pdf
+!*_MANUAL.pdf

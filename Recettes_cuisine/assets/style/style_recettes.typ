@@ -39,12 +39,12 @@
       align: (left + horizon, right + horizon),
       [
         #text(style: "italic")[
-          Document généré le #datetime.today().display("[day]/[month]/[year]") avec #link("https://typst.app/")[Typst]
+          Document gÃ©nÃ©rÃ© le #datetime.today().display("[day]/[month]/[year]") avec #link("https://typst.app/")[Typst]
         ]
       ],
       [
         // Logo in bottom right
-        #image("../assets/images/canopee_logo.jpg", height: 1.2cm)
+        #image("/assets/images/canopee_logo.jpg", height: 1.2cm)
       ]
     )
   ]
@@ -117,7 +117,7 @@
 
 // Ingredients list with nice formatting
 #let ingredients_section(ingredients) = [
-  == >Z Ingrédients
+  == {1F95A} IngrÃ©dients
 
   #set text(size: 11pt)
   #grid(
@@ -126,7 +126,7 @@
     column-gutter: 1em,
     stroke: none,
     ..ingredients.map(ing => (
-      ["],
+      [\u{2022}],
       [*#ing.name*],
       [#text(fill: lightbrown, style: "italic")[#ing.quantity]]
     )).flatten()
@@ -136,7 +136,7 @@
 
 // Preparation steps with numbered list
 #let preparation_section(steps) = [
-  == =h<s Préparation
+  == {1F468}{200D}{1F373} PrÃ©paration
 
   #set enum(numbering: "1.", indent: 1em)
   #for step in steps [
@@ -147,7 +147,7 @@
 
 // Cooking info box
 #let cooking_info(time, temp, recipient, precautions: none) = [
-  == =% Cuisson
+  == {1F525} Cuisson
 
   #box(
     fill: orange.lighten(80%),
@@ -161,16 +161,16 @@
       columns: (auto, 1fr),
       row-gutter: 0.6em,
       column-gutter: 1em,
-      [*Durée :*], [#time],
-      [*Température :*], [#temp],
-      [*Récipient :*], [#recipient],
+      [*DurÃ©e :*], [#time],
+      [*TempÃ©rature :*], [#temp],
+      [*RÃ©cipient :*], [#recipient],
     )
 
     #if precautions != none [
       #v(0.5em)
       #line(length: 100%, stroke: 0.5pt + orange)
       #v(0.5em)
-      *  Précautions :* #precautions
+      *PrÃ©cautions :* #precautions
     ]
   ]
   #v(1em)
@@ -178,7 +178,7 @@
 
 // Serving info box
 #let serving_info(persons, items: none, time_after: none) = [
-  == <} Service
+  == {1F37D}{FE0F} Service
 
   #box(
     fill: green.lighten(80%),
@@ -194,7 +194,7 @@
       column-gutter: 1em,
       [*Pour :*], [#persons],
       ..if items != none {
-        ([*Nombre de pièces :*], [#items])
+        ([*Nombre de piÃ¨ces :*], [#items])
       } else {
         ()
       },
@@ -220,7 +220,7 @@
     #set text(size: 11pt)
     #align(center)[
       #text(size: 14pt, weight: "bold", fill: rgb("#ff6b35"))[
-         #title
+        {270F}{FE0F} EXERCICE: #title
       ]
     ]
     #v(0.8em)
@@ -231,7 +231,7 @@
 
 // Cost breakdown table
 #let cost_table(ingredients, energy_cost: none, total: none) = [
-  == =° Coût de revient
+  == {1F4B0} CoÃ»t de revient
 
   #table(
     columns: (1fr, auto, auto),
@@ -241,7 +241,7 @@
     inset: 0.7em,
 
     // Header
-    [*Ingrédient*], [*Quantité*], [*Prix*],
+    [*IngrÃ©dient*], [*QuantitÃ©*], [*Prix*],
 
     // Ingredients rows
     ..ingredients.map(ing => (
@@ -253,8 +253,8 @@
     // Energy cost if provided
     ..if energy_cost != none {
       (
-        [Énergie (four électrique)],
-        [],
+        [Ã‰nergie (four Ã©lectrique)],
+        [\u{2014}],
         [#text(fill: brown)[#energy_cost]]
       )
     } else {
@@ -285,7 +285,7 @@
     width: 100%,
   )[
     #set text(size: 10.5pt)
-    #text(weight: "bold", fill: green)[=¡ Astuce :]
+    #text(weight: "bold", fill: green)[{1F4A1} ASTUCE :]
     #v(0.3em)
     #content
   ]
@@ -302,7 +302,7 @@
     width: 100%,
   )[
     #set text(size: 10.5pt)
-    #text(weight: "bold", fill: rgb("#e76f51"))[< Le sais-tu ?]
+    #text(weight: "bold", fill: rgb("#e76f51"))[{1F31F} LE SAIS-TU ?]
     #v(0.3em)
     #content
   ]
