@@ -29,8 +29,7 @@
   paper: "a4",
   margin: (top: 2.5cm, bottom: 3cm, left: 2.5cm, right: 2.5cm),
   fill: cream,
-  footer: [
-    #set align(left)
+  footer: context [
     #set text(size: 8pt, fill: inkl)
     #line(length: 100%, stroke: 0.5pt + inkl)
     #v(0.3em)
@@ -42,18 +41,14 @@
         #image("/assets/images/canopee_logo.jpg", height: 1.2cm)
       ],
       [
-        #text(style: "italic")[
+        #text(style: "italic", size: 9pt)[
           Document généré le #datetime.today().display("[day]/[month]/[year]") avec #link("https://typst.app/")[Typst]
         ]
       ],
       [
         // Pagination on right
         #text(size: 10pt)[
-          Page #context {
-            let current = counter(page).get().first()
-            let total = counter(page).final().first()
-            [#current/#total]
-          }
+          Page #{counter(page).get().first()}/#{counter(page).final().first()}
         ]
       ]
     )
