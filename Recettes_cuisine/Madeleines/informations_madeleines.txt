@@ -37,21 +37,21 @@ ingredient#2_name: Beurre
 ingredient#2_quantity: 100 g
 ingredient#2_price: 1,80 euros
 # cost for bulk buy
-# bulk quantity: 250 g
-# bulk price: 1,80 euros	
+# bulk quantity: 1 kg
+# bulk price: 1,80 euros
 # cost for ingredient in recipe
 # quantity used: 100 g
-# resulting cost: 0,72 euros
+# resulting cost: 0,18 euros
 # ingredient#3 ---------------------------------
 ingredient#3_name: Œufs
 ingredient#3_quantity: 3 units
 ingredient#3_price: 0,90 euros
 # cost for bulk buy
-# bulk quantity: 12 units
-# bulk price: 2,70 euros
+# bulk quantity: 6 units
+# bulk price: 5,40 euros
 # cost for ingredient in recipe
 # quantity used: 3 units
-# resulting cost: 0,68 euros	
+# resulting cost: 2,70 euros	
 # ingredient#4 ---------------------------------
 ingredient#4_name: Sucre
 ingredient#4_quantity: 150 g
@@ -160,8 +160,8 @@ serving_number_of_persons: 6 personnes
 
 # Price of different ingredients and other costs
 # ingredient#1 price: 0,51 euros
-# ingredient#2 price: 0,72 euros
-# ingredient#3 price: 0,68 euros
+# ingredient#2 price: 0,18 euros
+# ingredient#3 price: 2,70 euros
 # ingredient#4 price: 0,09 euros
 # ingredient#5 price: [ ]
 # ingredient#6 price: [ ]
