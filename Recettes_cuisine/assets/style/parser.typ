@@ -163,6 +163,33 @@
   str-val + " €"
 }
 
+// Calculate energy cost from cooking time
+// Default: 3.5 kW oven (3500W), 0.51 EUR/kWh electricity rate
+#let calculate-energy-cost(cooking-time-str, oven-power-kw: 3.5, rate-per-kwh: 0.51) = {
+  if cooking-time-str == none {
+    return 0.0
+  }
+
+  // Extract minutes from string like "10 minutes" or "25 min"
+  let minutes-match = cooking-time-str.match(regex("(\\d+)\\s*(?:minutes?|min)"))
+  if minutes-match != none {
+    let minutes = float(minutes-match.captures.at(0))
+    let hours = minutes / 60.0
+    let cost = oven-power-kw * hours * rate-per-kwh
+    return cost
+  }
+
+  // Extract hours if specified
+  let hours-match = cooking-time-str.match(regex("(\\d+)\\s*(?:heures?|h)"))
+  if hours-match != none {
+    let hours = float(hours-match.captures.at(0))
+    let cost = oven-power-kw * hours * rate-per-kwh
+    return cost
+  }
+
+  return 0.0
+}
+
 // Main parsing function - reads file and returns all data
 #let parse-recipe-file(filename) = {
   let content = read(filename)
@@ -177,14 +204,19 @@
     }
   }
 
-  let energy-val = extract-price-value(extract-field(content, "# energy price (electric oven)"))
+  // Get cooking info to calculate energy cost
+  let cooking-info = parse-cooking(content)
+
+  // Calculate energy cost automatically from cooking time
+  // Using 3.5 kW oven power (3500W) and 0.51 EUR/kWh electricity rate
+  let energy-val = calculate-energy-cost(cooking-info.time, oven-power-kw: 3.5, rate-per-kwh: 0.51)
   let total-cost = calculate-total-cost(ingredient-costs, energy-cost: energy-val)
 
   (
     name: extract-field(content, "name"),
     ingredients: ingredients,
     steps: parse-steps(content),
-    cooking: parse-cooking(content),
+    cooking: cooking-info,
     serving: parse-serving(content),
     prices: (
       energy: if energy-val > 0.0 { format-price(energy-val) } else { none },
