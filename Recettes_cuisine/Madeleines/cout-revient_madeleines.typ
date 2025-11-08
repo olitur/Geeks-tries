@@ -73,58 +73,65 @@
   total: recipe.prices.total
 )
 
-// Cost per serving
-#if recipe.serving.persons != none [
-  = Coût par personne
+// Coût par personne et par pièce en 2 colonnes
+#grid(
+  columns: (1fr, 1fr),
+  column-gutter: 1.5em,
+  [
+    #if recipe.serving.persons != none [
+      = Coût par personne
 
-  #let persons-match = recipe.serving.persons.match(regex("(\\d+)"))
-  #if persons-match != none [
-    #let persons = int(persons-match.captures.at(0))
-    #let total-val = extract-price-value(recipe.prices.total)
-    #let cost-per-person = total-val / persons
+      #let persons-match = recipe.serving.persons.match(regex("(\\d+)"))
+      #if persons-match != none [
+        #let persons = int(persons-match.captures.at(0))
+        #let total-val = extract-price-value(recipe.prices.total)
+        #let cost-per-person = total-val / persons
 
-    #align(center)[
-      #box(
-        fill: green.lighten(80%),
-        stroke: 2pt + green,
-        radius: 0.8em,
-        inset: 1.5em,
-      )[
-        #text(size: 18pt, weight: "bold", fill: green)[
-          #format-price(cost-per-person) par personne
+        #align(center)[
+          #box(
+            fill: green.lighten(80%),
+            stroke: 2pt + green,
+            radius: 0.8em,
+            inset: 1.5em,
+          )[
+            #text(size: 18pt, weight: "bold", fill: green)[
+              #format-price(cost-per-person) par personne
+            ]
+          ]
         ]
+
+        #v(1em)
       ]
     ]
+  ],
+  [
+    #if recipe.serving.items != none [
+      = Coût par pièce
 
-    #v(1em)
-  ]
-]
+      #let items-match = recipe.serving.items.match(regex("(\\d+)"))
+      #if items-match != none [
+        #let items = int(items-match.captures.at(0))
+        #let total-val = extract-price-value(recipe.prices.total)
+        #let cost-per-item = total-val / items
 
-#if recipe.serving.items != none [
-  = Coût par pièce
-
-  #let items-match = recipe.serving.items.match(regex("(\\d+)"))
-  #if items-match != none [
-    #let items = int(items-match.captures.at(0))
-    #let total-val = extract-price-value(recipe.prices.total)
-    #let cost-per-item = total-val / items
-
-    #align(center)[
-      #box(
-        fill: orange.lighten(85%),
-        stroke: 2pt + orange,
-        radius: 0.8em,
-        inset: 1.5em,
-      )[
-        #text(size: 16pt, weight: "bold", fill: orange)[
-          #format-price(cost-per-item) par pièce
+        #align(center)[
+          #box(
+            fill: orange.lighten(85%),
+            stroke: 2pt + orange,
+            radius: 0.8em,
+            inset: 1.5em,
+          )[
+            #text(size: 16pt, weight: "bold", fill: orange)[
+              #format-price(cost-per-item) par pièce
+            ]
+          ]
         ]
+
+        #v(1em)
       ]
     ]
-
-    #v(1em)
   ]
-]
+)
 
 = Économies potentielles
 

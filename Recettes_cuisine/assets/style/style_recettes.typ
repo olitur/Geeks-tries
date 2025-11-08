@@ -110,7 +110,7 @@
       #box(
         stroke: 2pt + orange,
         inset: 0.5em,
-        [#image(image_path, width: 80%)]
+        [#image(image_path, width: 50%)]
       )
     ]
     #v(1.5em)
@@ -222,7 +222,7 @@
     #set text(size: 11pt)
     #align(center)[
       #text(size: 14pt, weight: "bold", fill: rgb("#ff6b35"))[
-        {270F}{FE0F} EXERCICE: #title
+        \u{270F}\u{FE0F} EXERCICE: #title
       ]
     ]
     #v(0.8em)

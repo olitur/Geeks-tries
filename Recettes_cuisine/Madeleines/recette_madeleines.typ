@@ -19,30 +19,38 @@
   "../../Madeleines/images/madeleines_au_citron.jpg"
 )
 
-// Ingrédients
-#ingredients_section(recipe.ingredients)
+// Ingrédients et Préparation en 2 colonnes
+#grid(
+  columns: (1fr, 1fr),
+  column-gutter: 1.5em,
+  [#ingredients_section(recipe.ingredients)],
+  [#preparation_section(recipe.steps)]
+)
 
-// Préparation
-#preparation_section(recipe.steps)
-
-// Cuisson
-#if recipe.cooking.time != none [
-  #cooking_info(
-    recipe.cooking.time,
-    recipe.cooking.temperature,
-    recipe.cooking.recipient,
-    precautions: recipe.cooking.precautions
-  )
-]
-
-// Service
-#if recipe.serving.persons != none [
-  #serving_info(
-    recipe.serving.persons,
-    items: recipe.serving.items,
-    time_after: recipe.serving.time_after
-  )
-]
+// Cuisson et Service en 2 colonnes
+#grid(
+  columns: (1fr, 1fr),
+  column-gutter: 1.5em,
+  [
+    #if recipe.cooking.time != none [
+      #cooking_info(
+        recipe.cooking.time,
+        recipe.cooking.temperature,
+        recipe.cooking.recipient,
+        precautions: recipe.cooking.precautions
+      )
+    ]
+  ],
+  [
+    #if recipe.serving.persons != none [
+      #serving_info(
+        recipe.serving.persons,
+        items: recipe.serving.items,
+        time_after: recipe.serving.time_after
+      )
+    ]
+  ]
+)
 
 // ============================================================
 // EXERCICES POUR LES ENFANTS
