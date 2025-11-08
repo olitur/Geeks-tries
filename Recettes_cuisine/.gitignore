@@ -1,0 +1,6 @@
+# # Ignore ALL generated output files
+# *.typ
+# *.pdf
+
+# Ignore questions to IA
+Questions_to-IA.md

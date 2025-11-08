@@ -1,0 +1,176 @@
+# =============================================================================
+# INFORMATION ABOUT THE RECIPE - TEMPLATE
+# =============================================================================
+# IMPORTANT: Fill this file BEFORE 
+# Save as: informations_<name of recipe>.txt (remove _TEMPLATE from filename)
+#
+# Lines starting with # are `comments` (not read)
+# put a space after semicolon : to avoid compilation errors 
+# (for exemple, following value "name" should be entered as this :
+# name: Madeleines au beurre # OK ; notice the space after the semicolon
+# name:Madeleines au beurre  # NOT OK ; no space after semicolon
+#
+# If you cant' fill the values, leave them empty (example : you have only 4 ingredients ans there is 10 items to fill in the ingredients list. Empty values or [ ] mean to the software: skip this field
+# =============================================================================
+
+
+# Recipe name (required)
+# -----------------------------------------------------------------------------
+name: Madeleines au beurre
+
+
+# Recipe details
+# -----------------------------------------------------------------------------
+# Ingredients
+# ingredient#1 ---------------------------------
+ingredient#1_name: Farine
+ingredient#1_quantity: 250 g
+ingredient#1_price: 2,05 euros
+# cost for bulk buy
+# bulk quantity: 1 kg
+# bulk price: 2,05 euros	
+# cost for ingredient in recipe
+# quantity used: 250 g
+# resulting cost: 0,51 euros
+# ingredient#2 ---------------------------------
+ingredient#2_name: Beurre
+ingredient#2_quantity: 100 g
+ingredient#2_price: 1,80 euros
+# cost for bulk buy
+# bulk quantity: 250 g
+# bulk price: 1,80 euros	
+# cost for ingredient in recipe
+# quantity used: 100 g
+# resulting cost: 0,72 euros
+# ingredient#3 ---------------------------------
+ingredient#3_name: Œufs
+ingredient#3_quantity: 3 units
+ingredient#3_price: 0,90 euros
+# cost for bulk buy
+# bulk quantity: 12 units
+# bulk price: 2,70 euros
+# cost for ingredient in recipe
+# quantity used: 3 units
+# resulting cost: 0,68 euros	
+# ingredient#4 ---------------------------------
+ingredient#4_name: Sucre
+ingredient#4_quantity: 150 g
+ingredient#4_price: 0,60 euros
+# cost for bulk buy
+# bulk quantity: 1 kg
+# bulk price: 0,60 euros
+# cost for ingredient in recipe
+# quantity used: 150 g
+# resulting cost: 0,09 euros
+# ingredient#5 ---------------------------------
+ingredient#5_name: [ ]
+ingredient#5_quantity: [ ]
+ingredient#5_price: [ ]
+# cost for bulk buy
+# bulk quantity: [ ]
+# bulk price: [ ]
+# cost for ingredient in recipe
+# quantity used: [ ]
+# resulting cost: [ ]
+# ingredient#6 ---------------------------------
+ingredient#6_name: [ ]
+ingredient#6_quantity: [ ]
+ingredient#6_price: [ ]
+# cost for bulk buy
+# bulk quantity: [ ]
+# bulk price: [ ]
+# cost for ingredient in recipe
+# quantity used: [ ]
+# resulting cost: [ ]
+# ingredient#7 ---------------------------------
+ingredient#7_name: [ ]
+ingredient#7_quantity: [ ]
+ingredient#7_price: [ ]
+# cost for bulk buy
+# bulk quantity: [ ]
+# bulk price: [ ]
+# cost for ingredient in recipe
+# quantity used: [ ]
+# resulting cost: [ ]
+# ingredient#8 ---------------------------------
+ingredient#8_name: [ ]
+ingredient#8_quantity: [ ]
+ingredient#8_price: [ ]
+# cost for bulk buy
+# bulk quantity: [ ]
+# bulk price: [ ]
+# cost for ingredient in recipe
+# quantity used: [ ]
+# resulting cost: [ ]
+# ingredient#9 ---------------------------------
+ingredient#9_name: [ ]
+ingredient#9_quantity: [ ]
+ingredient#9_price: [ ]
+# cost for bulk buy
+# bulk quantity: [ ]
+# bulk price: [ ]
+# cost for ingredient in recipe
+# quantity used: [ ]
+# resulting cost: [ ]	
+# ingredient#10 --------------------------------
+ingredient#10_name: [ ]
+ingredient#10_quantity: [ ]
+ingredient#10_price: [ ]	
+# cost for bulk buy
+# bulk quantity: [ ]
+# bulk price: [ ]
+# cost for ingredient in recipe
+# quantity used: [ ]
+# resulting cost: [ ]
+
+# Preparation steps
+# step#1 ---------------------------------------	
+preparation_step#1: Mélanger la farine et le sucre.
+# step#2 ---------------------------------------
+preparation_step#2: Ajouter les œufs un à un.
+# step#3 ---------------------------------------
+preparation_step#3: Faire fondre le beurre et l'incorporer à la pâte.
+# step#4 ---------------------------------------
+preparation_step#4: Laisser reposer la pâte au réfrigérateur pendant 1 heure.
+# step#5 ---------------------------------------
+preparation_step#5: Remplir les moules à madeleines avec la pâte.
+# step#6 ---------------------------------------
+preparation_step#6: [ ]
+# step#7 ---------------------------------------	
+preparation_step#7: [ ]
+# step#8 ---------------------------------------
+preparation_step#8: [ ]
+# step#9 ---------------------------------------
+preparation_step#9: [ ]	
+# step#10 ---------------------------------------
+preparation_step#10: [ ]
+
+# Cooking details
+cooking_time: 10 minutes	
+cooking_temperature: 200 °C (thermostat 6-7)
+cooking_recipient: Moules à madeleines
+cooking_prior_precautions: Beurrer et fariner les moules.
+cooking_verification_steps_during: Surveiller la cuisson après 8 minutes.
+cooking_verification_step_end: Vérifier la cuisson avec la pointe d'un couteau (doit ressortir sèche).
+
+# Serving details
+serving_time_after_cooking: Immédiatement après refroidissement
+serving_number_of_items: 12 madeleines
+serving_number_of_persons: 6 personnes
+
+# Price of different ingredients and other costs
+# ingredient#1 price: 0,51 euros
+# ingredient#2 price: 0,72 euros
+# ingredient#3 price: 0,68 euros
+# ingredient#4 price: 0,09 euros
+# ingredient#5 price: [ ]
+# ingredient#6 price: [ ]
+# ingredient#7 price: [ ]
+# ingredient#8 price: [ ]
+# ingredient#9 price: [ ]
+# ingredient#10 price: [ ]
+
+# energy price (electric oven): 0,15 euros
+# total energy cost: [ ]
+# =============================================================================
+
