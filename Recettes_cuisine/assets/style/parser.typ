@@ -29,6 +29,103 @@
   }
 }
 
+// Extract numeric value from price string (e.g., "0,51 euros" -> 0.51)
+#let extract-price-value(price-str) = {
+  if price-str == none {
+    return 0.0
+  }
+
+  // Remove "euros" and trim
+  let clean = price-str.replace("euros", "").replace("€", "").trim()
+
+  // Replace comma with period for decimal
+  clean = clean.replace(",", ".")
+
+  // Try to convert to float
+  let value = 0.0
+
+  // Simple parsing: find the first number
+  let num-match = clean.matches(regex("(\\d+\\.?\\d*)"))
+  if num-match.len() > 0 {
+    // Convert string to float
+    value = float(num-match.at(0).text)
+  }
+
+  value
+}
+
+// Format price for display
+#let format-price(value) = {
+  // Convert to string with 2 decimals
+  let str-val = str(calc.round(value, digits: 2))
+
+  // Replace period with comma
+  str-val = str-val.replace(".", ",")
+
+  str-val + " €"
+}
+
+// Parse quantity string and convert to base units
+// Returns (value, unit) tuple
+// Examples: "250 g" → (250, "g"), "1 kg" → (1000, "g"), "3 œufs" → (3, "units")
+#let parse-quantity(quantity-str) = {
+  if quantity-str == none {
+    return (0, "")
+  }
+
+  // Match patterns like "250 g", "1.5 kg", "3 œufs", "100 ml"
+  let match = quantity-str.match(regex("([0-9.,]+)\\s*([a-zA-Zœéè]+)"))
+
+  if match == none {
+    return (0, "")
+  }
+
+  let value-str = match.captures.at(0).replace(",", ".")
+  let value = float(value-str)
+  let unit = match.captures.at(1).trim()
+
+  // Convert to base units (kg → g, units → units, etc.)
+  if unit == "kg" {
+    return (value * 1000, "g")
+  } else if unit == "g" {
+    return (value, "g")
+  } else if unit in ("œufs", "oeufs", "eggs", "units", "unités", "pièces", "pieces") {
+    return (value, "units")
+  } else if unit == "l" {
+    return (value * 1000, "ml")
+  } else if unit == "ml" {
+    return (value, "ml")
+  }
+
+  // Return as-is if unit not recognized
+  return (value, unit)
+}
+
+// Calculate ingredient cost from bulk price and quantities
+#let calculate-ingredient-cost(bulk-price-str, bulk-quantity-str, recipe-quantity-str) = {
+  if bulk-price-str == none or bulk-quantity-str == none or recipe-quantity-str == none {
+    return 0.0
+  }
+
+  // Extract price value
+  let price = extract-price-value(bulk-price-str)
+
+  // Parse quantities
+  let (bulk-qty, bulk-unit) = parse-quantity(bulk-quantity-str)
+  let (recipe-qty, recipe-unit) = parse-quantity(recipe-quantity-str)
+
+  // Check units match
+  if bulk-unit != recipe-unit or bulk-qty == 0 {
+    return 0.0
+  }
+
+  // Calculate cost: (recipe quantity / bulk quantity) × bulk price
+  let ratio = recipe-qty / bulk-qty
+  let cost = price * ratio
+
+  return cost
+}
+
 // Parse all ingredients (up to 10)
 #let parse-ingredients(content) = {
   let ingredients = ()
@@ -37,15 +134,20 @@
     let name = extract-field(content, "ingredient#" + str(i) + "_name")
 
     if name != none {
+      let recipe-qty = extract-field(content, "ingredient#" + str(i) + "_quantity")
+      let bulk-qty = extract-field(content, "ingredient#" + str(i) + "_bulk_quantity")
+      let bulk-price = extract-field(content, "ingredient#" + str(i) + "_bulk_price")
+
+      // Calculate cost automatically from bulk price and quantities
+      let cost = calculate-ingredient-cost(bulk-price, bulk-qty, recipe-qty)
+
       let ing = (
         name: name,
-        quantity: extract-field(content, "ingredient#" + str(i) + "_quantity"),
-        price: extract-field(content, "ingredient#" + str(i) + "_price"),
+        quantity: recipe-qty,
+        bulk_quantity: bulk-qty,
+        bulk_price: bulk-price,
+        cost: format-price(cost),
       )
-
-      // Note: For now, bulk info and cost are in the comments
-      // We'll extract the resulting cost from the price summary section instead
-      // This is simpler and doesn't require complex regex
 
       ingredients.push(ing)
     }
@@ -89,33 +191,7 @@
   )
 }
 
-// Extract numeric value from price string (e.g., "0,51 euros" -> 0.51)
-#let extract-price-value(price-str) = {
-  if price-str == none {
-    return 0.0
-  }
-
-  // Remove "euros" and trim
-  let clean = price-str.replace("euros", "").replace("€", "").trim()
-
-  // Replace comma with period for decimal
-  clean = clean.replace(",", ".")
-
-  // Try to convert to float
-  // In Typst, we use float() but need to handle potential errors
-  let value = 0.0
-
-  // Simple parsing: find the first number
-  let num-match = clean.matches(regex("(\\d+\\.?\\d*)"))
-  if num-match.len() > 0 {
-    // Convert string to float
-    value = float(num-match.at(0).text)
-  }
-
-  value
-}
-
-// Extract ingredient costs from the price summary comments
+// Extract ingredient costs from the price summary comments (deprecated - now calculated automatically)
 #let extract-ingredient-costs(content) = {
   let costs = ()
 
@@ -152,17 +228,6 @@
   total
 }
 
-// Format price for display
-#let format-price(value) = {
-  // Convert to string with 2 decimals
-  let str-val = str(calc.round(value, digits: 2))
-
-  // Replace period with comma
-  str-val = str-val.replace(".", ",")
-
-  str-val + " €"
-}
-
 // Calculate energy cost from cooking time
 // Default: 3.5 kW oven (3500W), 0.51 EUR/kWh electricity rate
 #let calculate-energy-cost(cooking-time-str, oven-power-kw: 3.5, rate-per-kwh: 0.51) = {
@@ -195,13 +260,12 @@
   let content = read(filename)
 
   let ingredients = parse-ingredients(content)
-  let ingredient-costs = extract-ingredient-costs(content)
 
-  // Add costs to ingredients
-  for i in range(ingredients.len()) {
-    if i < ingredient-costs.len() and ingredient-costs.at(i) != none {
-      ingredients.at(i).insert("cost", ingredient-costs.at(i))
-    }
+  // Extract ingredient costs (already calculated in parse-ingredients)
+  let ingredient-costs = ()
+  for ing in ingredients {
+    let cost-val = extract-price-value(ing.cost)
+    ingredient-costs.push(ing.cost)
   }
 
   // Get cooking info to calculate energy cost

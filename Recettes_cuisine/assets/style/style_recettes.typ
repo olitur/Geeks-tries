@@ -249,7 +249,7 @@
     ..ingredients.map(ing => (
       [#ing.name],
       [#ing.quantity],
-      [#text(fill: brown)[#ing.price]]
+      [#text(fill: brown)[#ing.cost]]
     )).flatten(),
 
     // Energy cost if provided

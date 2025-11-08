@@ -25,103 +25,53 @@ name: Madeleines au beurre
 # ingredient#1 ---------------------------------
 ingredient#1_name: Farine
 ingredient#1_quantity: 250 g
-ingredient#1_price: 2,05 euros
-# cost for bulk buy
-# bulk quantity: 1 kg
-# bulk price: 2,05 euros	
-# cost for ingredient in recipe
-# quantity used: 250 g
-# resulting cost: 0,51 euros
+ingredient#1_bulk_quantity: 1 kg
+ingredient#1_bulk_price: 2,05 euros
 # ingredient#2 ---------------------------------
 ingredient#2_name: Beurre
 ingredient#2_quantity: 100 g
-ingredient#2_price: 1,80 euros
-# cost for bulk buy
-# bulk quantity: 1 kg
-# bulk price: 1,80 euros
-# cost for ingredient in recipe
-# quantity used: 100 g
-# resulting cost: 0,18 euros
+ingredient#2_bulk_quantity: 1 kg
+ingredient#2_bulk_price: 1,80 euros
 # ingredient#3 ---------------------------------
 ingredient#3_name: Œufs
 ingredient#3_quantity: 3 œufs
-ingredient#3_price: 0,34 euros
-# cost for bulk buy
-# bulk quantity: 6 œufs
-# bulk price: 2,05 euros
-# cost for ingredient in recipe
-# quantity used: 3 œufs
-# resulting cost: 1,02 euros	
+ingredient#3_bulk_quantity: 6 œufs
+ingredient#3_bulk_price: 2,05 euros	
 # ingredient#4 ---------------------------------
 ingredient#4_name: Sucre
 ingredient#4_quantity: 150 g
-ingredient#4_price: 2,56 euros
-# cost for bulk buy
-# bulk quantity: 1 kg
-# bulk price: 2,56 euros
-# cost for ingredient in recipe
-# quantity used: 150 g
-# resulting cost: 0,38 euros
+ingredient#4_bulk_quantity: 1 kg
+ingredient#4_bulk_price: 2,56 euros
 # ingredient#5 ---------------------------------
 ingredient#5_name: [ ]
 ingredient#5_quantity: [ ]
-ingredient#5_price: [ ]
-# cost for bulk buy
-# bulk quantity: [ ]
-# bulk price: [ ]
-# cost for ingredient in recipe
-# quantity used: [ ]
-# resulting cost: [ ]
+ingredient#5_bulk_quantity: [ ]
+ingredient#5_bulk_price: [ ]
 # ingredient#6 ---------------------------------
 ingredient#6_name: [ ]
 ingredient#6_quantity: [ ]
-ingredient#6_price: [ ]
-# cost for bulk buy
-# bulk quantity: [ ]
-# bulk price: [ ]
-# cost for ingredient in recipe
-# quantity used: [ ]
-# resulting cost: [ ]
+ingredient#6_bulk_quantity: [ ]
+ingredient#6_bulk_price: [ ]
 # ingredient#7 ---------------------------------
 ingredient#7_name: [ ]
 ingredient#7_quantity: [ ]
-ingredient#7_price: [ ]
-# cost for bulk buy
-# bulk quantity: [ ]
-# bulk price: [ ]
-# cost for ingredient in recipe
-# quantity used: [ ]
-# resulting cost: [ ]
+ingredient#2_bulk_quantity: [ ]
+ingredient#7_bulk_price: [ ]
 # ingredient#8 ---------------------------------
 ingredient#8_name: [ ]
 ingredient#8_quantity: [ ]
-ingredient#8_price: [ ]
-# cost for bulk buy
-# bulk quantity: [ ]
-# bulk price: [ ]
-# cost for ingredient in recipe
-# quantity used: [ ]
-# resulting cost: [ ]
+ingredient#3_bulk_quantity: [ ]
+ingredient#8_bulk_price: [ ]
 # ingredient#9 ---------------------------------
 ingredient#9_name: [ ]
 ingredient#9_quantity: [ ]
-ingredient#9_price: [ ]
-# cost for bulk buy
-# bulk quantity: [ ]
-# bulk price: [ ]
-# cost for ingredient in recipe
-# quantity used: [ ]
-# resulting cost: [ ]	
+ingredient#4_bulk_quantity: [ ]
+ingredient#9_bulk_price: [ ]
 # ingredient#10 --------------------------------
 ingredient#10_name: [ ]
 ingredient#10_quantity: [ ]
-ingredient#10_price: [ ]	
-# cost for bulk buy
-# bulk quantity: [ ]
-# bulk price: [ ]
-# cost for ingredient in recipe
-# quantity used: [ ]
-# resulting cost: [ ]
+ingredient#5_bulk_quantity: [ ]
+ingredient#10_bulk_price: [ ]	
 
 # Preparation steps
 # step#1 ---------------------------------------	
@@ -157,20 +107,5 @@ cooking_verification_step_end: Vérifier la cuisson avec la pointe d'un couteau 
 serving_time_after_cooking: Immédiatement après refroidissement
 serving_number_of_items: 12 madeleines
 serving_number_of_persons: 6 personnes
-
-# Price of different ingredients and other costs
-# ingredient#1 price: 0,51 euros
-# ingredient#2 price: 0,18 euros
-# ingredient#3 price: 1,02 euros
-# ingredient#4 price: 0,38 euros
-# ingredient#5 price: [ ]
-# ingredient#6 price: [ ]
-# ingredient#7 price: [ ]
-# ingredient#8 price: [ ]
-# ingredient#9 price: [ ]
-# ingredient#10 price: [ ]
-
-# energy price (electric oven): 0,15 euros
-# total energy cost: [ ]
 # =============================================================================
 
