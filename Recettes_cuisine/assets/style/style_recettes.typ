@@ -35,16 +35,26 @@
     #line(length: 100%, stroke: 0.5pt + inkl)
     #v(0.3em)
     #grid(
-      columns: (1fr, auto),
-      align: (left + horizon, right + horizon),
+      columns: (auto, 1fr, auto),
+      align: (left + horizon, center + horizon, right + horizon),
+      [
+        // Logo on left
+        #image("/assets/images/canopee_logo.jpg", height: 1.2cm)
+      ],
       [
         #text(style: "italic")[
           Document généré le #datetime.today().display("[day]/[month]/[year]") avec #link("https://typst.app/")[Typst]
         ]
       ],
       [
-        // Logo in bottom right
-        #image("/assets/images/canopee_logo.jpg", height: 1.2cm)
+        // Pagination on right
+        #text(size: 10pt)[
+          Page #context {
+            let current = counter(page).get().first()
+            let total = counter(page).final().first()
+            [#current/#total]
+          }
+        ]
       ]
     )
   ]
@@ -147,66 +157,48 @@
   #v(1em)
 ]
 
-// Cooking info box
+// Cooking info
 #let cooking_info(time, temp, recipient, precautions: none) = [
   == \u{1F525} Cuisson
 
-  #box(
-    fill: orange.lighten(80%),
-    stroke: 1.5pt + orange,
-    radius: 0.5em,
-    inset: 1em,
-    width: 100%,
-  )[
-    #set text(size: 10.5pt)
-    #grid(
-      columns: (auto, 1fr),
-      row-gutter: 0.6em,
-      column-gutter: 1em,
-      [*Durée :*], [#time],
-      [*Température :*], [#temp],
-      [*Récipient :*], [#recipient],
-    )
-
-    #if precautions != none [
-      #v(0.5em)
-      #line(length: 100%, stroke: 0.5pt + orange)
-      #v(0.5em)
-      *Précautions :* #precautions
-    ]
-  ]
+  #set text(size: 10.5pt)
+  #grid(
+    columns: (auto, 1fr),
+    row-gutter: 0.6em,
+    column-gutter: 1em,
+    [*Durée :*], [#time],
+    [*Température :*], [#temp],
+    [*Récipient :*], [#recipient],
+    ..if precautions != none {
+      ([*Précautions :*], [#precautions])
+    } else {
+      ()
+    },
+  )
   #v(1em)
 ]
 
-// Serving info box
+// Serving info
 #let serving_info(persons, items: none, time_after: none) = [
   == \u{1F37D}\u{FE0F} Service
 
-  #box(
-    fill: green.lighten(80%),
-    stroke: 1.5pt + green,
-    radius: 0.5em,
-    inset: 1em,
-    width: 100%,
-  )[
-    #set text(size: 10.5pt)
-    #grid(
-      columns: (auto, 1fr),
-      row-gutter: 0.6em,
-      column-gutter: 1em,
-      [*Pour :*], [#persons],
-      ..if items != none {
-        ([*Nombre de pièces :*], [#items])
-      } else {
-        ()
-      },
-      ..if time_after != none {
-        ([*Quand servir :*], [#time_after])
-      } else {
-        ()
-      },
-    )
-  ]
+  #set text(size: 10.5pt)
+  #grid(
+    columns: (auto, 1fr),
+    row-gutter: 0.6em,
+    column-gutter: 1em,
+    [*Pour :*], [#persons],
+    ..if items != none {
+      ([*Nombre de pièces :*], [#items])
+    } else {
+      ()
+    },
+    ..if time_after != none {
+      ([*Quand servir :*], [#time_after])
+    } else {
+      ()
+    },
+  )
   #v(1em)
 ]
 
