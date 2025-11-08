@@ -29,14 +29,29 @@
   paper: "a4",
   margin: (top: 2.5cm, bottom: 3cm, left: 2.5cm, right: 2.5cm),
   fill: cream,
-  footer: [
-    #set text(size: 12pt, fill: rgb("#ff0000"))
-    #line(length: 100%, stroke: 2pt + rgb("#ff0000"))
-    #v(0.5em)
-    TEST FOOTER - CAN YOU SEE THIS?
-    #v(0.5em)
-    #line(length: 100%, stroke: 2pt + rgb("#ff0000"))
-  ]
+  footer: context {
+    set text(size: 9pt, fill: inkl)
+    line(length: 100%, stroke: 0.5pt + inkl)
+    v(0.5em)
+
+    // Three-column footer: Logo | Date | Page number
+    grid(
+      columns: (auto, 1fr, auto),
+      column-gutter: 1em,
+      // Left: Logo
+      image("/assets/images/canopee_logo.jpg", height: 1cm),
+      // Center: Generation date
+      align(center)[
+        #text(style: "italic")[
+          Généré le #datetime.today().display("[day]/[month]/[year]")
+        ]
+      ],
+      // Right: Pagination
+      align(right)[
+        Page #counter(page).get().first()/#counter(page).final().first()
+      ]
+    )
+  }
 )
 
 // Text settings - Alegreya (from assets/fonts/) with system fallbacks
