@@ -119,11 +119,11 @@
 
 // Ingredients list with nice formatting
 #let ingredients_section(ingredients) = [
-  == {1F95A} Ingrédients
+  == \u{1F95A} Ingrédients
 
   #set text(size: 11pt)
   #grid(
-    columns: (auto, 1fr, auto),
+    columns: (auto, auto, 1fr),
     row-gutter: 0.8em,
     column-gutter: 1em,
     stroke: none,
@@ -138,7 +138,7 @@
 
 // Preparation steps with numbered list
 #let preparation_section(steps) = [
-  == {1F468}{200D}{1F373} Préparation
+  == \u{1F468}\u{200D}\u{1F373} Préparation
 
   #set enum(numbering: "1.", indent: 1em)
   #for step in steps [
@@ -149,7 +149,7 @@
 
 // Cooking info box
 #let cooking_info(time, temp, recipient, precautions: none) = [
-  == {1F525} Cuisson
+  == \u{1F525} Cuisson
 
   #box(
     fill: orange.lighten(80%),
@@ -180,7 +180,7 @@
 
 // Serving info box
 #let serving_info(persons, items: none, time_after: none) = [
-  == {1F37D}{FE0F} Service
+  == \u{1F37D}\u{FE0F} Service
 
   #box(
     fill: green.lighten(80%),
@@ -233,7 +233,7 @@
 
 // Cost breakdown table
 #let cost_table(ingredients, energy_cost: none, total: none) = [
-  == {1F4B0} Coût de revient
+  == \u{1F4B0} Coût de revient
 
   #table(
     columns: (1fr, auto, auto),
@@ -287,7 +287,7 @@
     width: 100%,
   )[
     #set text(size: 10.5pt)
-    #text(weight: "bold", fill: green)[{1F4A1} ASTUCE :]
+    #text(weight: "bold", fill: green)[\u{1F4A1} ASTUCE :]
     #v(0.3em)
     #content
   ]
@@ -304,7 +304,7 @@
     width: 100%,
   )[
     #set text(size: 10.5pt)
-    #text(weight: "bold", fill: rgb("#e76f51"))[{1F31F} LE SAIS-TU ?]
+    #text(weight: "bold", fill: rgb("#e76f51"))[\u{1F31F} LE SAIS-TU ?]
     #v(0.3em)
     #content
   ]

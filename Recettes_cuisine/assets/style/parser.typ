@@ -11,6 +11,13 @@
 
   if matches.len() > 0 {
     let value = matches.at(0).captures.at(0).trim()
+
+    // Strip inline comments (anything after #)
+    let comment-pos = value.position("#")
+    if comment-pos != none {
+      value = value.slice(0, comment-pos).trim()
+    }
+
     // Check if empty or [ ]
     if value == "[ ]" or value == "[]" or value == "" {
       none

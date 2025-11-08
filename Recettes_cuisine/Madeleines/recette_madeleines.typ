@@ -121,8 +121,6 @@
   N'oublie pas de toujours demander l'aide d'un adulte pour utiliser le four ! 👨‍👩‍👧‍👦
 ]
 
-#pagebreak()
-
 = Notes et astuces
 
 #v(1em)
