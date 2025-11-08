@@ -44,24 +44,24 @@ ingredient#2_price: 1,80 euros
 # resulting cost: 0,18 euros
 # ingredient#3 ---------------------------------
 ingredient#3_name: Œufs
-ingredient#3_quantity: 3 units
-ingredient#3_price: 0,90 euros
+ingredient#3_quantity: 3 œufs
+ingredient#3_price: 0,34 euros
 # cost for bulk buy
-# bulk quantity: 6 units
-# bulk price: 5,40 euros
+# bulk quantity: 6 œufs
+# bulk price: 2,05 euros
 # cost for ingredient in recipe
-# quantity used: 3 units
-# resulting cost: 2,70 euros	
+# quantity used: 3 œufs
+# resulting cost: 1,02 euros	
 # ingredient#4 ---------------------------------
 ingredient#4_name: Sucre
 ingredient#4_quantity: 150 g
-ingredient#4_price: 0,60 euros
+ingredient#4_price: 2,56 euros
 # cost for bulk buy
 # bulk quantity: 1 kg
-# bulk price: 0,60 euros
+# bulk price: 2,56 euros
 # cost for ingredient in recipe
 # quantity used: 150 g
-# resulting cost: 0,09 euros
+# resulting cost: 0,38 euros
 # ingredient#5 ---------------------------------
 ingredient#5_name: [ ]
 ingredient#5_quantity: [ ]
@@ -161,8 +161,8 @@ serving_number_of_persons: 6 personnes
 # Price of different ingredients and other costs
 # ingredient#1 price: 0,51 euros
 # ingredient#2 price: 0,18 euros
-# ingredient#3 price: 2,70 euros
-# ingredient#4 price: 0,09 euros
+# ingredient#3 price: 1,02 euros
+# ingredient#4 price: 0,38 euros
 # ingredient#5 price: [ ]
 # ingredient#6 price: [ ]
 # ingredient#7 price: [ ]
