@@ -50,9 +50,11 @@
   ]
 )
 
-// Text settings - Using Alegreya for elegance with fallbacks
+// Text settings - Alegreya (from assets/fonts/) with system fallbacks
+// Note: On Typst Web, fonts are auto-detected from uploaded files
+// For command line: use --font-path assets/fonts flag
 #set text(
-  font: ("Alegreya", "DejaVu Sans", "FreeSans"),
+  font: ("Alegreya", "DejaVu Sans", "Liberation Serif"),
   lang: "fr",
   size: 11pt,
   fill: ink

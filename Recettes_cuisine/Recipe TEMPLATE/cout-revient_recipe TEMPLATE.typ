@@ -9,14 +9,14 @@
 // ============================================================
 
 #import "../assets/style/style_recettes.typ": *
-#import "../assets/style/parse_recipe.typ": parse_recipe_file
+#import "../assets/style/parser.typ": parse-recipe-file
 
 // ============================================================
 // LOAD RECIPE DATA
 // ============================================================
 
 // Parse the informations file
-#let recipe = parse_recipe_file("informations_recipe TEMPLATE.txt")
+#let recipe = parse-recipe-file("../../Recipe TEMPLATE/informations_recipe TEMPLATE.txt")
 
 // ============================================================
 // COST ANALYSIS DOCUMENT
@@ -25,7 +25,7 @@
 #align(center)[
   #v(2em)
   #text(size: 24pt, weight: "bold", fill: orange)[
-    Coût de revient
+    Coï¿½t de revient
   ]
   #v(0.5em)
   #text(size: 18pt, fill: lightbrown)[
@@ -34,7 +34,7 @@
   #v(2em)
 ]
 
-= Récapitulatif de la recette
+= Rï¿½capitulatif de la recette
 
 #box(
   fill: cream.darken(5%),
@@ -45,11 +45,11 @@
 )[
   *Nom :* #recipe.name \
   #if recipe.serving.persons != none [*Pour :* #recipe.serving.persons \ ]
-  #if recipe.serving.items != none [*Nombre de pièces :* #recipe.serving.items \ ]
+  #if recipe.serving.items != none [*Nombre de piï¿½ces :* #recipe.serving.items \ ]
   #if recipe.cooking.time != none [*Temps de cuisson :* #recipe.cooking.time]
 ]
 
-= Détail des coûts par ingrédient
+= Dï¿½tail des coï¿½ts par ingrï¿½dient
 
 #table(
   columns: (2fr, 1fr, 1fr, 1fr, 1fr),
@@ -59,33 +59,33 @@
   inset: 0.7em,
 
   // Header
-  [*Ingrédient*], [*Quantité achetée*], [*Prix d'achat*], [*Quantité utilisée*], [*Coût*],
+  [*Ingrï¿½dient*], [*Quantitï¿½ achetï¿½e*], [*Prix d'achat*], [*Quantitï¿½ utilisï¿½e*], [*Coï¿½t*],
 
   // Ingredient rows
   ..recipe.ingredients.map(ing => (
     [#ing.name],
-    [#ing.bulk_quantity],
-    [#ing.bulk_price],
+    [#ing.at("bulk_quantity", default: "â€”")],
+    [#ing.at("bulk_price", default: "â€”")],
     [#ing.quantity],
-    [*#ing.cost*]
+    [*#ing.at("cost", default: "â€”")*]
   )).flatten()
 )
 
-= Résumé des coûts
+= Rï¿½sumï¿½ des coï¿½ts
 
 #cost_table(
   recipe.ingredients,
-  energy_cost: recipe.energy_cost,
-  total: recipe.total_cost
+  energy_cost: recipe.prices.energy,
+  total: recipe.prices.total
 )
 
 // Cost per person (if serving info available)
 #if recipe.serving.persons != none [
-  = Coût par personne
+  = Coï¿½t par personne
 
   #let persons_str = recipe.serving.persons
   #let persons_num = int(persons_str.split(" ").at(0))
-  #let total_str = recipe.total_cost.replace("¬", "").replace(",", ".").trim()
+  #let total_str = recipe.prices.total.replace("ï¿½", "").replace(",", ".").trim()
 
   // Simple division display
   #align(center)[
@@ -96,7 +96,7 @@
       inset: 1.5em,
     )[
       #text(size: 18pt, weight: "bold", fill: green)[
-        #recipe.total_cost ÷ #persons_num personnes
+        #recipe.prices.total ï¿½ #persons_num personnes
       ]
     ]
   ]
@@ -104,15 +104,15 @@
   #v(1em)
 ]
 
-= Astuces pour économiser
+= Astuces pour ï¿½conomiser
 
 #tips_box[
-  - Acheter les ingrédients en plus grande quantité permet souvent de réduire le coût unitaire
-  - Comparer les prix entre différents magasins
-  - Privilégier les produits de saison
-  - Éviter le gaspillage en pesant précisément les quantités
+  - Acheter les ingrï¿½dients en plus grande quantitï¿½ permet souvent de rï¿½duire le coï¿½t unitaire
+  - Comparer les prix entre diffï¿½rents magasins
+  - Privilï¿½gier les produits de saison
+  - ï¿½viter le gaspillage en pesant prï¿½cisï¿½ment les quantitï¿½s
 ]
 
 #fun_fact[
-  En cuisinant toi-même, tu économises souvent 50% par rapport aux produits tout faits du commerce !
+  En cuisinant toi-mï¿½me, tu ï¿½conomises souvent 50% par rapport aux produits tout faits du commerce !
 ]

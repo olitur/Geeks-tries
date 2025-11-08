@@ -9,17 +9,17 @@
 // ============================================================
 
 #import "../assets/style/style_recettes.typ": *
-#import "../assets/style/parse_recipe.typ": parse_recipe_file
+#import "../assets/style/parser.typ": parse-recipe-file
 
 // ============================================================
 // LOAD RECIPE DATA
 // ============================================================
 
 // Parse the informations file
-#let recipe = parse_recipe_file("informations_recipe TEMPLATE.txt")
+#let recipe = parse-recipe-file("../../Recipe TEMPLATE/informations_recipe TEMPLATE.txt")
 
 // Set image path (update to match your image filename)
-#let recipe_image = "images/image_recipe TEMPLATE.jpg"
+#let recipe_image = "../../Recipe TEMPLATE/images/image_recipe TEMPLATE.jpg"
 
 // ============================================================
 // RECIPE DOCUMENT
@@ -27,11 +27,11 @@
 
 #recipe_title(recipe.name, recipe_image)
 
-// Ingrédients
+// Ingrï¿½dients
 #ingredients_section(recipe.ingredients)
 
-// Préparation
-#preparation_section(recipe.preparation_steps)
+// Prï¿½paration
+#preparation_section(recipe.steps)
 
 // Cuisson
 #if recipe.cooking.time != none [
@@ -56,22 +56,22 @@
 // EXERCISES FOR CHILDREN
 // ============================================================
 
-= Activités ludiques
+= Activitï¿½s ludiques
 
 #exercise_box(
-  "Compte les ingrédients",
+  "Compte les ingrï¿½dients",
   [
-    Combien d'ingrédients différents utilise-t-on pour cette recette ?
+    Combien d'ingrï¿½dients diffï¿½rents utilise-t-on pour cette recette ?
 
     #v(1em)
-    Réponse : \_\_\_\_\_\_\_
+    Rï¿½ponse : \_\_\_\_\_\_\_
   ]
 )
 
 #exercise_box(
-  "Les étapes de préparation",
+  "Les ï¿½tapes de prï¿½paration",
   [
-    Dessine les 3 étapes principales de la préparation :
+    Dessine les 3 ï¿½tapes principales de la prï¿½paration :
 
     #v(1em)
     #grid(
@@ -79,17 +79,17 @@
       column-gutter: 1em,
       [
         #box(height: 6cm, width: 100%, stroke: 1pt + gray, radius: 0.3em)[
-          #align(center + horizon)[Étape 1]
+          #align(center + horizon)[ï¿½tape 1]
         ]
       ],
       [
         #box(height: 6cm, width: 100%, stroke: 1pt + gray, radius: 0.3em)[
-          #align(center + horizon)[Étape 2]
+          #align(center + horizon)[ï¿½tape 2]
         ]
       ],
       [
         #box(height: 6cm, width: 100%, stroke: 1pt + gray, radius: 0.3em)[
-          #align(center + horizon)[Étape 3]
+          #align(center + horizon)[ï¿½tape 3]
         ]
       ]
     )
@@ -97,7 +97,7 @@
 )
 
 #fun_fact[
-  Sais-tu que la cuisine est une science ? Quand tu mélanges les ingrédients et que tu les chauffes, des réactions chimiques se produisent ! C'est ce qui donne le bon goût et la belle forme à tes gâteaux.
+  Sais-tu que la cuisine est une science ? Quand tu mï¿½langes les ingrï¿½dients et que tu les chauffes, des rï¿½actions chimiques se produisent ! C'est ce qui donne le bon goï¿½t et la belle forme ï¿½ tes gï¿½teaux.
 ]
 
 #tips_box[

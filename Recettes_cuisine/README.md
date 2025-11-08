@@ -91,6 +91,13 @@ typst compile --root . Ma_Recette/recette_Ma_Recette.typ
 typst compile --root . Ma_Recette/cout-revient_Ma_Recette.typ
 ```
 
+**Pour utiliser les polices Alegreya (optionnel) :**
+```bash
+typst compile --root . --font-path assets/fonts Ma_Recette/recette_Ma_Recette.typ
+typst compile --root . --font-path assets/fonts Ma_Recette/cout-revient_Ma_Recette.typ
+```
+Sans `--font-path`, Typst utilisera les polices système (DejaVu Sans, Liberation Serif).
+
 **Avec Typst Web :**
 1. Ouvrez `recette_Ma_Recette.typ`
 2. Cliquez sur "Compile"
@@ -194,9 +201,11 @@ Consultez le dossier `Madeleines/` pour un exemple complet fonctionnel :
 - Vérifiez que vous compilez depuis le dossier `Recettes_cuisine/`
 - Utilisez toujours `--root .` dans la commande
 
-### Erreur : "unknown font"
+### Avertissement : "unknown font family: alegreya"
 - Ce n'est qu'un avertissement, le PDF se génère quand même
-- Les polices de secours (DejaVu Sans, FreeSans) sont utilisées
+- Les polices de secours (DejaVu Sans, Liberation Serif) sont utilisées automatiquement
+- **Solution** : Ajoutez `--font-path assets/fonts` à votre commande de compilation
+- **Sur Typst Web** : Aucun avertissement, les polices sont détectées automatiquement
 
 ### Le PDF ne contient pas mes modifications
 - Vérifiez que vous avez sauvegardé le fichier `.txt`
