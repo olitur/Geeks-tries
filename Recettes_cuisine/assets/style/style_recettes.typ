@@ -29,29 +29,13 @@
   paper: "a4",
   margin: (top: 2.5cm, bottom: 3cm, left: 2.5cm, right: 2.5cm),
   fill: cream,
-  footer: context [
-    #set text(size: 8pt, fill: inkl)
-    #line(length: 100%, stroke: 0.5pt + inkl)
-    #v(0.3em)
-    #grid(
-      columns: (auto, 1fr, auto),
-      align: (left + horizon, center + horizon, right + horizon),
-      [
-        // Logo on left
-        #image("/assets/images/canopee_logo.jpg", height: 1.2cm)
-      ],
-      [
-        #text(style: "italic", size: 9pt)[
-          Document généré le #datetime.today().display("[day]/[month]/[year]") avec #link("https://typst.app/")[Typst]
-        ]
-      ],
-      [
-        // Pagination on right
-        #text(size: 10pt)[
-          Page #{counter(page).get().first()}/#{counter(page).final().first()}
-        ]
-      ]
-    )
+  footer: [
+    #set text(size: 12pt, fill: rgb("#ff0000"))
+    #line(length: 100%, stroke: 2pt + rgb("#ff0000"))
+    #v(0.5em)
+    TEST FOOTER - CAN YOU SEE THIS?
+    #v(0.5em)
+    #line(length: 100%, stroke: 2pt + rgb("#ff0000"))
   ]
 )
 
