@@ -1,0 +1,112 @@
+# =============================================================================
+# Recipe Information - TOML Format
+# =============================================================================
+
+name = "Madeleines au beurre"
+
+# =============================================================================
+# Ingredients
+# =============================================================================
+
+[[ingredients]]
+name = "Farine"
+quantity = "250 g"
+bulk_quantity = "1 kg"
+bulk_price = "2,05 euros"
+
+[[ingredients]]
+name = "Beurre"
+quantity = "100 g"
+bulk_quantity = "1 kg"
+bulk_price = "1,80 euros"
+
+[[ingredients]]
+name = "Œufs"
+quantity = "3 œufs"
+bulk_quantity = "6 œufs"
+bulk_price = "2,05 euros"
+
+[[ingredients]]
+name = "Sucre"
+quantity = "150 g"
+bulk_quantity = "1 kg"
+bulk_price = "2,56 euros"
+
+# Add more ingredients as needed (up to 8 total)
+# Uncomment and fill in the following templates:
+
+# [[ingredients]]
+# name = ""
+# quantity = ""
+# bulk_quantity = ""
+# bulk_price = ""
+
+# [[ingredients]]
+# name = ""
+# quantity = ""
+# bulk_quantity = ""
+# bulk_price = ""
+
+# [[ingredients]]
+# name = ""
+# quantity = ""
+# bulk_quantity = ""
+# bulk_price = ""
+
+# [[ingredients]]
+# name = ""
+# quantity = ""
+# bulk_quantity = ""
+# bulk_price = ""
+
+# =============================================================================
+# Preparation Steps
+# =============================================================================
+
+[[steps]]
+text = "Mélanger la farine et le sucre."
+
+[[steps]]
+text = "Ajouter les œufs un à un."
+
+[[steps]]
+text = "Faire fondre le beurre et l'incorporer à la pâte."
+
+[[steps]]
+text = "Laisser reposer la pâte au réfrigérateur pendant 1 heure."
+
+[[steps]]
+text = "Remplir les moules à madeleines avec la pâte."
+
+# Add more steps as needed (up to 8 total)
+# Uncomment and fill in the following templates:
+
+# [[steps]]
+# text = ""
+
+# [[steps]]
+# text = ""
+
+# [[steps]]
+# text = ""
+
+# =============================================================================
+# Cooking Information
+# =============================================================================
+
+[cooking]
+time = "10 minutes"
+temperature = "200 °C (thermostat 6-7)"
+recipient = "Moules à madeleines"
+precautions = "Beurrer et fariner les moules."
+verification_during = "Surveiller la cuisson après 8 minutes."
+verification_end = "Vérifier la cuisson avec la pointe d'un couteau (doit ressortir sèche)."
+
+# =============================================================================
+# Serving Information
+# =============================================================================
+
+[serving]
+time_after = "Immédiatement après refroidissement"
+items = "12 madeleines"
+persons = "6 personnes"

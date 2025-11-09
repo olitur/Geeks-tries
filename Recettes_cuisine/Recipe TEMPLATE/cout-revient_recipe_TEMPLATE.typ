@@ -1,14 +1,15 @@
 // ============================================================
-// Coût de revient : Madeleines au beurre
+// Coût de revient : [NOM DE VOTRE RECETTE]
 // ============================================================
-// Ce fichier lit automatiquement les données depuis informations_madeleines.txt
+// Ce fichier lit automatiquement les données depuis le fichier TOML
 // ============================================================
 
 // IMPORTANT: Import style FIRST to apply page setup with footer
 #import "../assets/style/style_recettes.typ": *
 
 // Charger les données de la recette depuis TOML
-#let recipe-data = toml("informations_madeleines.toml")
+// TODO: Remplacez "informations_recipe_TEMPLATE.toml" par le nom de votre fichier
+#let recipe-data = toml("informations_recipe_TEMPLATE.toml")
 #let recipe = process-recipe-data(recipe-data)
 
 // Configure footer at document level

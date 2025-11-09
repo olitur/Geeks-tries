@@ -1,0 +1,131 @@
+# =============================================================================
+# Recipe Information - TOML Template
+# =============================================================================
+# Instructions:
+# 1. Copy this entire "Recipe TEMPLATE" folder
+# 2. Rename the folder to your recipe name (e.g., "Cookies", "Tarte_aux_pommes")
+# 3. Rename this file to match: informations_<recipe_name>.toml
+# 4. Fill in the information below
+# 5. Update the .typ files to reference your new TOML file
+# =============================================================================
+
+# Recipe name (required)
+name = "Quatre Quart"
+
+# =============================================================================
+# Ingredients (up to 8 total)
+# =============================================================================
+# Fill in at least the first few ingredients, uncomment more as needed
+
+[[ingredients]]
+name = "Farine"
+quantity = "250 g"              # Quantity used in recipe
+bulk_quantity = "1 kg"          # Quantity you buy at the store
+bulk_price = "2,12 euros"       # Price of the bulk quantity
+
+[[ingredients]]
+name = "Sucre"
+quantity = "240 g"
+bulk_quantity = "1 kg"
+bulk_price = "1,80 euros"
+
+[[ingredients]]
+name = "Œufs"
+quantity = "4 œufs"
+bulk_quantity = "6 œufs"
+bulk_price = "2,27 euros"
+
+[[ingredients]]
+name = "Levure chimique"
+quantity = "2 c à c"
+bulk_quantity = "1 s"
+bulk_price = "1.18"
+
+[[ingredients]]
+name = "Sucre vanillé"
+quantity = "10 g"
+bulk_quantity = "1 sachet"
+bulk_price = "2.58"
+
+# Add more ingredients as needed (uncomment and fill):
+
+# [[ingredients]]
+# name = ""
+# quantity = ""
+# bulk_quantity = ""
+# bulk_price = ""
+
+# [[ingredients]]
+# name = ""
+# quantity = ""
+# bulk_quantity = ""
+# bulk_price = ""
+
+# [[ingredients]]
+# name = ""
+# quantity = ""
+# bulk_quantity = ""
+# bulk_price = ""
+
+# =============================================================================
+# Preparation Steps (up to 8 total)
+# =============================================================================
+
+[[steps]]
+text = """*Peser les ingrédients : *
+Adaptez le poids de chaque ingrédient qui doit être le même que celui des œufs. En général, 4 œufs représentent plus ou moins 250 g."""
+
+[[steps]]
+text = """*Préchauffage du four : *
+Préchauffez votre four à 180°C."""
+
+[[steps]]
+text = """*Mélange des ingrédients : *
+Faites fondre le beurre 30 secondes au micro-ondes. Mélangez le beurre avec les sucres (fin et vanillé). Incorporez-y petit à petit les œufs."""
+
+[[steps]]
+text = "Une fois ce mélange effectué, ajoutez petit à petit la farine. Attention : faites-le par petite quantité pour éviter les grumeaux. "
+
+[[steps]]
+text = "Après la farine, incorporez la levure en poudre. Mélangez jusqu'à l'obtention d'un mélange parfait. "
+
+[[steps]]
+text = """*Cuisson du quatre-quarts : *
+Beurrez votre moule, versez-y la pâte et mettez le tout au four."""
+
+# Add more steps as needed (uncomment and fill):
+
+# [[steps]]
+# text = ""
+
+# =============================================================================
+# Cooking Information
+# =============================================================================
+
+[cooking]
+time = "25 minutes"                                    # Cooking time
+temperature = "180 °C (thermostat 6)"                  # Oven temperature
+recipient = "Moule à cake"                             # Baking dish/pan
+precautions = "Beurrer et fariner le moule."          # Precautions before cooking
+verification_during = """Commencez à surveiller après 40 minutes de cuisson.
+Tant que le cake ne noircit pas, vous pouvez le laisser au four."""   # Check during cooking
+verification_end = "Après 60 minutes maximum, le cake est à coup sûr somptueux."          # Final verification
+
+# =============================================================================
+# Serving Information
+# =============================================================================
+
+[serving]
+time_after = "Laisser refroidir 10 minutes"    # When to serve after cooking
+items = "1 gâteau"                              # Number of items produced
+persons = "8 personnes"                         # Number of servings
+
+# =============================================================================
+# Notes:
+# - All costs are calculated automatically from bulk prices and quantities
+# - Energy cost is calculated automatically based on cooking time
+# - Default oven power: 3.5 kW
+# - Default electricity rate: 0.51 €/kWh
+# - Units must match between bulk_quantity and quantity (g with g, œufs with œufs)
+# - Prices format: "2,50 euros" (with comma and quotes)
+# =============================================================================

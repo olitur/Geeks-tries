@@ -1,14 +1,15 @@
 // ============================================================
-// Recette : Madeleines au beurre
+// Recette : [NOM DE VOTRE RECETTE]
 // ============================================================
-// Ce fichier lit automatiquement les données depuis informations_madeleines.txt
+// Ce fichier lit automatiquement les données depuis le fichier TOML
 // ============================================================
 
 // IMPORTANT: Import style FIRST to apply page setup with footer
 #import "../assets/style/style_recettes.typ": *
 
 // Charger les données de la recette depuis TOML
-#let recipe-data = toml("informations_madeleines.toml")
+// TODO: Remplacez "informations_recipe_TEMPLATE.toml" par le nom de votre fichier
+#let recipe-data = toml("informations_recipe_TEMPLATE.toml")
 #let recipe = process-recipe-data(recipe-data)
 
 // Configure footer at document level
@@ -40,7 +41,8 @@
 
 #recipe_title(
   recipe.name,
-  "../../Madeleines/images/madeleines_au_citron.jpg"
+  // TODO: Remplacez par le chemin vers votre image (ou none si pas d'image)
+  none  // "../../VotreRecette/images/votre_image.jpg"
 )
 
 // Ingrédients et Préparation en 2 colonnes
@@ -160,11 +162,11 @@
 #v(1em)
 
 #tips_box[
-  *Astuce du chef :* Pour des madeleines bien bombées, laisse reposer la pâte au réfrigérateur pendant au moins 1 heure avant la cuisson.
+  *Astuce du chef :* Personnalisez cette section avec vos propres astuces !
 ]
 
 #fun_fact[
-  Les madeleines sont originaires de Lorraine, en France. Elles sont célèbres grâce à l'écrivain Marcel Proust qui les mentionne dans son livre "À la recherche du temps perdu" !
+  Ajoutez ici des faits amusants ou l'histoire de votre recette !
 ]
 
 // Vérifications pendant et après cuisson

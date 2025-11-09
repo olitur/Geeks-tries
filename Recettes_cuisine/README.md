@@ -6,9 +6,17 @@ Système simple de génération de PDF de recettes avec exercices pour enfants e
 
 Ce système vous permet de créer facilement deux PDF pour chaque recette :
 1. **Recette complète** avec exercices ludiques pour les enfants
-2. **Analyse des coûts** avec calculs détaillés
+2. **Analyse des coûts** avec calculs détaillés automatiques
 
-**Aucun code à écrire !** Il suffit de remplir un fichier texte simple et de compiler.
+**Aucun code à écrire !** Il suffit de remplir un fichier TOML simple et de compiler.
+
+## ✨ Fonctionnalités
+
+- ✅ **Format TOML** : Format standard, facile à lire et éditer
+- ✅ **Calculs automatiques** : Coûts par ingrédient, coût total, coût énergétique
+- ✅ **Pied de page personnalisé** : Logo, date de génération, numérotation des pages
+- ✅ **Template extensible** : Jusqu'à 8 ingrédients et 8 étapes par défaut
+- ✅ **Style professionnel** : Couleurs chaudes, mise en page familiale
 
 ## 📋 Pré-requis
 
@@ -45,124 +53,184 @@ Si vous ne voulez rien installer, utilisez **Typst Web** (https://typst.app) :
 
 ### Étape 1 : Créer votre dossier de recette
 
-Dupliquez le dossier `Recipe TEMPLATE` et renommez-le :
+Dupliquez le dossier `Madeleines` comme modèle et renommez-le :
 ```bash
-cp -r "Recipe TEMPLATE" "Ma_Recette"
+cp -r Madeleines Ma_Recette
 ```
 
-### Étape 2 : Remplir les informations
+### Étape 2 : Remplir les informations TOML
 
-Éditez le fichier `informations_Ma_Recette.txt` avec **n'importe quel éditeur de texte** (Notepad, VS Code, etc.) :
+Éditez le fichier `informations_madeleines.toml` (renommez-le en `informations_ma_recette.toml`) avec **n'importe quel éditeur de texte** (Notepad, VS Code, etc.) :
 
+```toml
+# Nom de la recette
+name = "Gâteau au chocolat"
+
+# Ingrédients
+[[ingredients]]
+name = "Chocolat noir"
+quantity = "200 g"
+bulk_quantity = "400 g"
+bulk_price = "4,50 euros"
+
+[[ingredients]]
+name = "Beurre"
+quantity = "150 g"
+bulk_quantity = "250 g"
+bulk_price = "2,80 euros"
+
+# Étapes de préparation
+[[steps]]
+text = "Faire fondre le chocolat au bain-marie."
+
+[[steps]]
+text = "Ajouter le beurre et mélanger."
+
+# Cuisson
+[cooking]
+time = "25 minutes"
+temperature = "180 °C (thermostat 6)"
+recipient = "Moule à cake"
+precautions = "Beurrer et fariner le moule."
+verification_during = "Surveiller la couleur après 20 min."
+verification_end = "Piquer avec un couteau (doit ressortir sec)."
+
+# Service
+[serving]
+time_after = "Laisser refroidir 10 minutes"
+items = "1 gâteau"
+persons = "8 personnes"
 ```
-name: Gâteau au chocolat
 
-ingredient#1_name: Chocolat noir
-ingredient#1_quantity: 200 g
-ingredient#1_price: 2,50 euros
+### Étape 3 : Mettre à jour les fichiers Typst
 
-ingredient#2_name: Beurre
-ingredient#2_quantity: 150 g
-ingredient#2_price: 1,80 euros
+Modifiez les fichiers `.typ` pour pointer vers votre nouveau fichier TOML :
 
-preparation_step#1: Faire fondre le chocolat au bain-marie.
-preparation_step#2: Ajouter le beurre et mélanger.
-
-cooking_time: 25 minutes
-cooking_temperature: 180 °C (thermostat 6)
-cooking_recipient: Moule à cake
-
-serving_number_of_persons: 8 personnes
-serving_number_of_items: 1 gâteau
+Dans `recette_ma_recette.typ` et `cout-revient_ma_recette.typ`, changez :
+```typst
+#let recipe-data = toml("informations_ma_recette.toml")
 ```
 
-### Étape 3 : Ajouter une image (optionnel)
+### Étape 4 : Ajouter une image (optionnel)
 
 Placez une photo de votre recette dans le dossier `images/` :
 - Format : JPG ou PNG
-- Nom : `Ma_Recette.jpg` (même nom que votre dossier)
+- Nom : `ma_recette.jpg`
 
-### Étape 4 : Générer les PDF
+Puis dans `recette_ma_recette.typ`, mettez à jour le chemin de l'image :
+```typst
+#recipe_title(
+  recipe.name,
+  "../../Ma_Recette/images/ma_recette.jpg"
+)
+```
+
+### Étape 5 : Générer les PDF
 
 **En ligne de commande :**
 ```bash
 cd Recettes_cuisine
-typst compile --root . Ma_Recette/recette_Ma_Recette.typ
-typst compile --root . Ma_Recette/cout-revient_Ma_Recette.typ
+typst compile --root . Ma_Recette/recette_ma_recette.typ
+typst compile --root . Ma_Recette/cout-revient_ma_recette.typ
 ```
-
-**Pour utiliser les polices Alegreya (optionnel) :**
-```bash
-typst compile --root . --font-path assets/fonts Ma_Recette/recette_Ma_Recette.typ
-typst compile --root . --font-path assets/fonts Ma_Recette/cout-revient_Ma_Recette.typ
-```
-Sans `--font-path`, Typst utilisera les polices système (DejaVu Sans, Liberation Serif).
 
 **Avec Typst Web :**
-1. Ouvrez `recette_Ma_Recette.typ`
+1. Ouvrez `recette_ma_recette.typ`
 2. Cliquez sur "Compile"
 3. Le PDF se génère automatiquement !
 
-## 📝 Format du fichier d'informations
+## 📝 Format du fichier TOML
 
 ### Structure générale
 
-Le fichier `informations_*.txt` est un simple fichier texte avec des paires `clé: valeur`.
+Le fichier utilise le format TOML (Tom's Obvious, Minimal Language), un format de configuration simple et lisible.
 
-**Important :**
-- Toujours mettre un espace après le `:`
-- Utiliser `[ ]` pour les champs vides
-- Les lignes commençant par `#` sont des commentaires (ignorés)
+**Avantages du TOML :**
+- ✅ Format standard avec validation automatique
+- ✅ Support natif dans Typst (pas de parser custom)
+- ✅ Coloration syntaxique dans la plupart des éditeurs
+- ✅ Plus rapide que le parsing de texte personnalisé
 
-### Champs disponibles
+### Sections principales
 
-#### Nom de la recette
-```
-name: Nom de ma recette
-```
-
-#### Ingrédients (jusqu'à 10)
-```
-ingredient#1_name: Farine
-ingredient#1_quantity: 250 g
-ingredient#1_price: 2,05 euros
+#### 1. Nom de la recette
+```toml
+name = "Madeleines au beurre"
 ```
 
-Pour les coûts détaillés, ajoutez en commentaires :
-```
-# bulk quantity: 1 kg
-# bulk price: 2,05 euros
-# resulting cost: 0,51 euros
+#### 2. Ingrédients (extensible)
+```toml
+[[ingredients]]
+name = "Farine"
+quantity = "250 g"
+bulk_quantity = "1 kg"
+bulk_price = "2,05 euros"
+
+[[ingredients]]
+name = "Beurre"
+quantity = "100 g"
+bulk_quantity = "1 kg"
+bulk_price = "1,80 euros"
 ```
 
-#### Étapes de préparation (jusqu'à 10)
-```
-preparation_step#1: Préchauffer le four.
-preparation_step#2: Mélanger tous les ingrédients.
+**Calcul automatique :** Le coût de chaque ingrédient est calculé automatiquement :
+- Coût = (quantité recette / quantité achat) × prix d'achat
+- Exemple : (100g / 1000g) × 1,80€ = 0,18€
+
+**Pour ajouter des ingrédients :** Décommentez les templates à la fin de la section ingrédients.
+
+#### 3. Étapes de préparation (extensible)
+```toml
+[[steps]]
+text = "Mélanger la farine et le sucre."
+
+[[steps]]
+text = "Ajouter les œufs un à un."
 ```
 
-#### Cuisson
-```
-cooking_time: 30 minutes
-cooking_temperature: 180 °C (thermostat 6)
-cooking_recipient: Moule rond
-cooking_prior_precautions: Beurrer et fariner le moule.
-cooking_verification_steps_during: Surveiller la couleur après 20 min.
-cooking_verification_step_end: Piquer avec un couteau (doit ressortir sec).
+**Pour ajouter des étapes :** Décommentez les templates à la fin de la section steps.
+
+#### 4. Cuisson
+```toml
+[cooking]
+time = "10 minutes"
+temperature = "200 °C (thermostat 6-7)"
+recipient = "Moules à madeleines"
+precautions = "Beurrer et fariner les moules."
+verification_during = "Surveiller la cuisson après 8 minutes."
+verification_end = "Vérifier avec la pointe d'un couteau."
 ```
 
-#### Service
-```
-serving_time_after_cooking: Immédiatement
-serving_number_of_items: 12 pièces
-serving_number_of_persons: 6 personnes
+**Calcul automatique :** Le coût énergétique est calculé automatiquement :
+- Four : 3,5 kW (configurable dans `style_recettes.typ`)
+- Tarif : 0,51 €/kWh (configurable)
+- Exemple : 10 min = 0,167 h × 3,5 kW × 0,51 €/kWh = 0,30 €
+
+#### 5. Service
+```toml
+[serving]
+time_after = "Immédiatement après refroidissement"
+items = "12 madeleines"
+persons = "6 personnes"
 ```
 
-#### Coûts (dans les commentaires à la fin)
-```
-# ingredient#1 price: 0,51 euros
-# ingredient#2 price: 0,72 euros
-# energy price (electric oven): 0,15 euros
+**Calculs automatiques :**
+- Coût par personne = coût total / nombre de personnes
+- Coût par pièce = coût total / nombre de pièces
+
+### Template avec espaces réservés
+
+Le fichier TOML inclut des emplacements commentés pour extension facile :
+
+```toml
+# Add more ingredients as needed (up to 8 total)
+# Uncomment and fill in the following templates:
+
+# [[ingredients]]
+# name = ""
+# quantity = ""
+# bulk_quantity = ""
+# bulk_price = ""
 ```
 
 ## 🎨 Personnalisation
@@ -174,53 +242,80 @@ serving_number_of_persons: 6 personnes
 #let orange = rgb("#ff8c42")      // Couleur des titres
 #let cream = rgb("#fff5eb")       // Fond de page
 #let green = rgb("#90be6d")       // Encadrés info
+#let brown = rgb("#8b4513")       // Texte chocolat
 ```
 
-### Modifier le logo
+### Modifier le logo dans le pied de page
 
-Remplacez `assets/images/canopee_logo.jpg` par votre propre logo.
+Remplacez `assets/images/canopee_logo.jpg` par votre propre logo (recommandé : hauteur 1cm).
 
-### Modifier les exercices
+Le logo apparaît automatiquement dans le pied de page de chaque PDF avec :
+- **Gauche :** Logo
+- **Centre :** Date de génération
+- **Droite :** Numérotation des pages
 
-Éditez directement `recette_Ma_Recette.typ` pour personnaliser les exercices pour enfants.
+### Modifier les paramètres de coût énergétique
 
-## 📚 Exemples
+Dans `assets/style/style_recettes.typ`, fonction `calculate-energy-cost()` :
+```typst
+#let calculate-energy-cost(
+  cooking-time-str,
+  oven-power-kw: 3.5,      // Puissance du four en kW
+  rate-per-kwh: 0.51       // Tarif électrique en €/kWh
+)
+```
 
-### Exemple complet : Madeleines
+### Modifier les exercices pour enfants
 
-Consultez le dossier `Madeleines/` pour un exemple complet fonctionnel :
-- `informations_madeleines.txt` : Fichier de données rempli
-- `recette_madeleines.typ` : Fichier de recette
-- `cout-revient_madeleines.typ` : Analyse des coûts
-- `recette_madeleines.pdf` : PDF généré
-- `cout-revient_madeleines.pdf` : PDF des coûts
+Éditez directement `recette_ma_recette.typ` pour personnaliser :
+- Les questions
+- Les zones de dessin
+- Les calculs mathématiques
+- Les faits amusants
+
+## 📚 Exemple complet : Madeleines
+
+Consultez le dossier `Madeleines/` pour un exemple fonctionnel complet :
+- **informations_madeleines.toml** : Données de la recette au format TOML
+- **recette_madeleines.typ** : Document Typst de la recette
+- **cout-revient_madeleines.typ** : Document Typst de l'analyse des coûts
+- **recette_madeleines.pdf** : PDF généré de la recette
+- **cout-revient_madeleines.pdf** : PDF généré de l'analyse des coûts
 
 ## 🔧 Dépannage
 
 ### Erreur : "file not found"
-- Vérifiez que vous compilez depuis le dossier `Recettes_cuisine/`
-- Utilisez toujours `--root .` dans la commande
-
-### Avertissement : "unknown font family: alegreya"
-- Ce n'est qu'un avertissement, le PDF se génère quand même
-- Les polices de secours (DejaVu Sans, Liberation Serif) sont utilisées automatiquement
-- **Solution** : Ajoutez `--font-path assets/fonts` à votre commande de compilation
-- **Sur Typst Web** : Aucun avertissement, les polices sont détectées automatiquement
+- ✅ Vérifiez que vous compilez depuis le dossier `Recettes_cuisine/`
+- ✅ Utilisez toujours `--root .` dans la commande
+- ✅ Vérifiez que le nom du fichier TOML correspond à celui référencé dans le `.typ`
 
 ### Le PDF ne contient pas mes modifications
-- Vérifiez que vous avez sauvegardé le fichier `.txt`
-- Recompilez après chaque modification
+- ✅ Vérifiez que vous avez sauvegardé le fichier `.toml`
+- ✅ Recompilez après chaque modification
+- ✅ Vérifiez qu'il n'y a pas d'erreurs de syntaxe TOML
 
-### Les coûts ne s'affichent pas
-- Vérifiez la section des commentaires en fin de fichier `informations_*.txt`
-- Format attendu : `# ingredient#1 price: 0,51 euros`
+### Erreur de syntaxe TOML
+- ✅ Vérifiez que toutes les chaînes de caractères sont entre guillemets : `name = "Farine"`
+- ✅ Respectez la structure `[[section]]` pour les tableaux
+- ✅ Utilisez des éditeurs avec support TOML pour la validation automatique
+
+### Le pied de page n'apparaît pas
+- ✅ Le pied de page est configuré au niveau du document dans chaque fichier `.typ`
+- ✅ Vérifiez que le chemin vers le logo est correct : `../assets/images/canopee_logo.jpg`
+
+### Les coûts sont incorrects
+- ✅ Vérifiez que les unités sont cohérentes (g avec g, œufs avec œufs)
+- ✅ Format des prix : `"2,05 euros"` (avec virgule et guillemets)
+- ✅ Les calculs utilisent : coût = (quantité recette / quantité bulk) × prix bulk
 
 ## 💡 Astuces
 
-1. **Copie rapide** : Dupliquez un dossier de recette existante et modifiez juste les informations
-2. **Images** : Utilisez des images compressées (< 500 KB) pour des PDF plus légers
-3. **Partage** : Les PDFs générés sont autonomes, vous pouvez les partager facilement
-4. **Impression** : Format A4 optimisé pour l'impression directe
+1. **Copie rapide** : Dupliquez le dossier `Madeleines` et modifiez juste le fichier TOML
+2. **Validation TOML** : Utilisez un éditeur avec support TOML (VS Code avec extension TOML)
+3. **Images** : Utilisez des images compressées (< 500 KB) pour des PDF plus légers
+4. **Partage** : Les PDFs générés sont autonomes, vous pouvez les partager facilement
+5. **Template** : Les sections commentées dans le TOML permettent d'ajouter facilement des ingrédients/étapes
+6. **Calculs** : Tous les coûts sont recalculés automatiquement à chaque compilation
 
 ## 🌐 Utilisation sur Typst Web
 
@@ -228,26 +323,70 @@ Consultez le dossier `Madeleines/` pour un exemple complet fonctionnel :
 2. Cliquez sur "New Project" → "Upload files"
 3. Uploadez tout le dossier `Recettes_cuisine`
 4. La structure de dossiers est préservée
-5. Ouvrez `recette_Ma_Recette.typ` et compilez !
+5. Ouvrez `recette_madeleines.typ` et compilez !
 
 **Avantages :**
 - Pas d'installation nécessaire
 - Collaboration en temps réel possible
 - Sauvegarde automatique dans le cloud
+- Support natif du format TOML
+
+## 🆕 Changements récents
+
+### Migration vers TOML (2025)
+
+Le système a été migré du format texte personnalisé vers TOML standard :
+
+**Avantages :**
+- ✅ Format standardisé et reconnu
+- ✅ Validation automatique de la syntaxe
+- ✅ Parsing natif Typst (plus rapide)
+- ✅ Pas de parser custom à maintenir
+- ✅ Meilleure expérience développeur
+
+**Migration depuis l'ancien format :**
+Si vous avez des recettes au format `.txt`, convertissez-les en TOML en suivant l'exemple de `informations_madeleines.toml`.
 
 ## 📞 Support
 
 Besoin d'aide ? Consultez :
 - Documentation Typst : https://typst.app/docs
-- Exemples dans le dossier `Madeleines/`
+- Spécification TOML : https://toml.io
+- Exemple complet dans le dossier `Madeleines/`
 
 ## 🎓 Pour aller plus loin
 
 Une fois à l'aise, vous pouvez :
 - Modifier les styles dans `assets/style/style_recettes.typ`
+- Personnaliser les fonctions de calcul de coûts
 - Ajouter de nouvelles sections aux recettes
 - Créer vos propres exercices pour enfants
-- Personnaliser les calculs de coûts
+- Modifier les paramètres énergétiques selon votre four
+
+## 🛠️ Architecture technique
+
+```
+Recettes_cuisine/
+├── assets/
+│   ├── fonts/           # Polices Alegreya (optionnelles)
+│   ├── images/          # Logo Canopée
+│   └── style/
+│       └── style_recettes.typ  # Styles + fonctions de calcul
+├── Madeleines/          # Exemple de recette
+│   ├── informations_madeleines.toml  # Données TOML
+│   ├── recette_madeleines.typ        # Document recette
+│   ├── cout-revient_madeleines.typ   # Document coûts
+│   └── images/          # Images de la recette
+└── README.md
+```
+
+**Fonctions principales dans `style_recettes.typ` :**
+- `process-recipe-data()` : Traite les données TOML et calcule tous les coûts
+- `calculate-ingredient-cost()` : Calcul du coût par ingrédient
+- `calculate-energy-cost()` : Calcul du coût énergétique
+- `extract-price-value()` : Parsing des prix
+- `format-price()` : Formatage des prix pour affichage
+- `parse-quantity()` : Parsing et conversion des quantités
 
 ---
 
