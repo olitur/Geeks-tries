@@ -1,3 +1,7 @@
-# # Ignore ALL generated output files
+# Ignore ALL generated output files
 # *.typ
-# *.pdfnul
+*.pdf
+
+# Windows null device files (accidentally created)
+nul
+**/nul
