@@ -7,9 +7,12 @@
 // IMPORTANT: Import style FIRST to apply page setup with footer
 #import "../assets/style/style_recettes.typ": *
 
+// Define recipe folder name (relative to Recettes_cuisine root)
+#let recipe-folder-name = "Madeleines"
+
 // Charger les données de la recette depuis TOML
 #let recipe-data = toml("informations_madeleines.toml")
-#let recipe = process-recipe-data(recipe-data)
+#let recipe = process-recipe-data(recipe-data, recipe-folder: "../../" + recipe-folder-name)
 
 // Configure footer at document level
 #set page(footer: context {
@@ -93,7 +96,9 @@
 
 #cost_table(
   recipe.ingredients,
+  ustensiles: recipe.ustensiles,
   energy_cost: recipe.prices.energy,
+  ustensiles_cost: recipe.prices.ustensiles,
   total: recipe.prices.total
 )
 

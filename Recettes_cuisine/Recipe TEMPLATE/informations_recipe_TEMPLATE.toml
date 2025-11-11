@@ -22,18 +22,27 @@ name = "Ingrédient 1"
 quantity = "250 g"              # Quantity used in recipe
 bulk_quantity = "1 kg"          # Quantity you buy at the store
 bulk_price = "2,50 euros"       # Price of the bulk quantity
+image = "images/ingredient1.jpg"  # Optional: path to ingredient image
+name_en = "Ingredient 1"        # Optional: English name
+quantity_en = "8.8 oz (250 g)"  # Optional: English quantity with US units
 
 [[ingredients]]
 name = "Ingrédient 2"
 quantity = "100 g"
 bulk_quantity = "500 g"
 bulk_price = "1,80 euros"
+image = "images/ingredient2.jpg"
+name_en = "Ingredient 2"
+quantity_en = "3.5 oz (100 g)"
 
 [[ingredients]]
 name = "Ingrédient 3"
 quantity = "2 œufs"
 bulk_quantity = "6 œufs"
 bulk_price = "3,00 euros"
+image = "images/ingredient3.jpg"
+name_en = "Ingredient 3"
+quantity_en = "2 eggs"
 
 # Add more ingredients as needed (uncomment and fill):
 
@@ -66,6 +75,65 @@ bulk_price = "3,00 euros"
 # quantity = ""
 # bulk_quantity = ""
 # bulk_price = ""
+# image = "images/ingredient.jpg"
+# name_en = "English name"
+# quantity_en = "English quantity"
+
+# =============================================================================
+# Ustensiles (Kitchen utensils and equipment)
+# =============================================================================
+
+[[ustensiles]]
+name = "Moule à cake"
+quantity = "1"
+bulk_quantity = "1"
+bulk_price = "8.50 euros"
+to_include_in_cost = "true"        # true/false: include in cost calculation
+cost_ratio = "0.003"                # Cost ratio based on usage (e.g., 0.003 = 0.3% of price per use)
+image = "images/moule-cake.jpg"
+name_en = "Loaf pan"
+
+[[ustensiles]]
+name = "Saladier"
+quantity = "1"
+bulk_quantity = "1"
+bulk_price = "9.45 euros"
+to_include_in_cost = "true"
+cost_ratio = "0.001"
+image = "images/saladier.jpg"
+name_en = "Mixing bowl"
+
+[[ustensiles]]
+name = "Balance de cuisine"
+quantity = "1"
+bulk_quantity = "1"
+bulk_price = "48.90 euros"
+to_include_in_cost = "false"        # Expensive equipment not included in per-recipe cost
+cost_ratio = ""
+image = "images/balance-cuisine.jpg"
+name_en = "Kitchen scale"
+
+[[ustensiles]]
+name = "Four"
+quantity = "1"
+bulk_quantity = "1"
+bulk_price = "250 euros"
+to_include_in_cost = "false"
+cost_ratio = ""
+image = "images/four.jpg"
+name_en = "Oven"
+
+# Add more ustensiles as needed (uncomment and fill):
+
+# [[ustensiles]]
+# name = ""
+# quantity = ""
+# bulk_quantity = ""
+# bulk_price = ""
+# to_include_in_cost = "true"
+# cost_ratio = "0.001"
+# image = "images/utensil.jpg"
+# name_en = "English name"
 
 # =============================================================================
 # Preparation Steps (up to 8 total)

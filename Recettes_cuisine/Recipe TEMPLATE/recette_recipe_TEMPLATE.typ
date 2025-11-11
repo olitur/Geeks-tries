@@ -7,10 +7,13 @@
 // IMPORTANT: Import style FIRST to apply page setup with footer
 #import "../assets/style/style_recettes.typ": *
 
-// Charger les données de la recette depuis TOML
+// Define recipe folder name (relative to Recettes_cuisine root)
+#let recipe-folder-name = "Recipe TEMPLATE"
+
+// Load recipe data
 // TODO: Remplacez "informations_recipe_TEMPLATE.toml" par le nom de votre fichier
 #let recipe-data = toml("informations_recipe_TEMPLATE.toml")
-#let recipe = process-recipe-data(recipe-data)
+#let recipe = process-recipe-data(recipe-data, recipe-folder: "../../" + recipe-folder-name)
 
 // Configure footer at document level
 #set page(footer: context {
@@ -155,6 +158,23 @@
 
 #tips_box[
   N'oublie pas de toujours demander l'aide d'un adulte pour utiliser le four ! 👨‍👩‍👧‍👦
+]
+
+// ============================================================
+// ENGLISH TRANSLATION SECTION
+// ============================================================
+// To use the English translation section, add these fields to your TOML file:
+// - For ingredients: name_en = "English name", quantity_en = "English quantity"
+// - For ustensiles: name_en = "English name"
+// Uncomment the section below once you've added English translations:
+
+#english_box[
+  #grid(
+    columns: (1fr, 1fr),
+    column-gutter: 1.5em,
+    [#ingredients_section_english(recipe.ingredients)],
+    [#ustensiles_section_english(recipe.ustensiles)]
+  )
 ]
 
 = Notes et astuces

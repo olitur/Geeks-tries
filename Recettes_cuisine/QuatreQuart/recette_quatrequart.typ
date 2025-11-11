@@ -7,10 +7,12 @@
 // IMPORTANT: Import style FIRST to apply page setup with footer
 #import "../assets/style/style_recettes.typ": *
 
-// Charger les données de la recette depuis TOML
-// TODO: Remplacez "informations_quatrequart.toml" par le nom de votre fichier
+// Define recipe folder name (relative to Recettes_cuisine root)
+#let recipe-folder-name = "QuatreQuart"
+
+// Load recipe data
 #let recipe-data = toml("informations_quatrequart.toml")
-#let recipe = process-recipe-data(recipe-data)
+#let recipe = process-recipe-data(recipe-data, recipe-folder: "../../" + recipe-folder-name)
 
 // Configure footer at document level
 #set page(footer: context {
@@ -155,6 +157,15 @@
 
 #tips_box[
   N'oublie pas de toujours demander l'aide d'un adulte pour utiliser le four ! 👨‍👩‍👧‍👦
+]
+
+#english_box[
+  #grid(
+    columns: (1fr, 1fr),
+    column-gutter: 1.5em,
+    [#ingredients_section_english(recipe.ingredients)],
+    [#ustensiles_section_english(recipe.ustensiles)]
+  )
 ]
 
 = Notes et astuces

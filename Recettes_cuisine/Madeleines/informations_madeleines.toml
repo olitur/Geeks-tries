@@ -10,27 +10,59 @@ name = "Madeleines au beurre"
 
 [[ingredients]]
 name = "Farine"
-quantity = "250 g"
+quantity = "200 g"
 bulk_quantity = "1 kg"
 bulk_price = "2,05 euros"
+image = "images/farine.jpg"
+name_en = "Flour"
+quantity_en = "7 oz (200 g)"
 
 [[ingredients]]
-name = "Beurre"
+name = "Beurre fondu"
 quantity = "100 g"
-bulk_quantity = "1 kg"
-bulk_price = "1,80 euros"
+bulk_quantity = "250 g"
+bulk_price = "2,40 euros"
+image = "images/beurre.jpg"
+name_en = "Melted butter"
+quantity_en = "3.5 oz (100 g)"
 
 [[ingredients]]
 name = "Œufs"
 quantity = "3 œufs"
 bulk_quantity = "6 œufs"
-bulk_price = "2,05 euros"
+bulk_price = "2,45 euros"
+image = "images/oeuf.jpg"
+name_en = "Eggs"
+quantity_en = "3 eggs"
 
 [[ingredients]]
 name = "Sucre"
 quantity = "150 g"
 bulk_quantity = "1 kg"
 bulk_price = "2,56 euros"
+image = "images/sucre.jpg"
+name_en = "Sugar"
+quantity_en = "5.3 oz (150 g)"
+
+
+[[ingredients]]
+name = "Levure chimique"
+quantity = "8 g"
+bulk_quantity = "88 g"
+bulk_price = "1.35 euros"
+image = "images/levure-chimique.jpg"
+name_en = "Baking powder"
+quantity_en = "0.3 oz (8 g)"
+
+
+[[ingredients]]
+name = "Fleur d'oranger"
+quantity = "2 c à s"
+bulk_quantity = ""
+bulk_price = ""
+image = "images/fleur-oranger.jpg"
+name_en = "Orange blossom water"
+quantity_en = "2 tbsp"
 
 # Add more ingredients as needed (up to 8 total)
 # Uncomment and fill in the following templates:
@@ -47,36 +79,106 @@ bulk_price = "2,56 euros"
 # bulk_quantity = ""
 # bulk_price = ""
 
-# [[ingredients]]
-# name = ""
-# quantity = ""
-# bulk_quantity = ""
-# bulk_price = ""
+# =============================================================================
+# Ustensiles
+# =============================================================================
 
-# [[ingredients]]
+[[ustensiles]]
+name = "Moule à madeleines"
+quantity = "2"
+bulk_quantity = "2"
+bulk_price = "12.50 euros"
+to_include_in_cost = "true" # true/false : include in cost calculation or not
+cost_ratio = "0.005"  # Cost ratio based on usage, if true, in decimal format
+image = "images/moule-a-madeleines.jpg"
+name_en = "Madeleine mold"
+
+[[ustensiles]]
+name = "Saladier"
+quantity = "1"
+bulk_quantity = "1"
+bulk_price = "9.45 euros"
+to_include_in_cost = "true" # true/false : include in cost calculation or not
+cost_ratio = "0.001"  # Cost ratio based on usage, if true, in decimal format
+image = "images/saladier.jpg"
+name_en = "Mixing bowl"
+
+[[ustensiles]]
+name = "Cuillère en bois"
+quantity = "1"
+bulk_quantity = "1"
+bulk_price = "3.00 euros"
+to_include_in_cost = "true" # true/false : include in cost calculation or not
+cost_ratio = ".001"  # Cost ratio based on usage, if true, in decimal format
+image = "images/cuillere-bois.jpg"
+name_en = "Wooden spoon"
+
+[[ustensiles]]
+name = "Balance de cuisine"
+quantity = "1"
+bulk_quantity = "1"
+bulk_price = "48.90 euros"
+to_include_in_cost = "false" # true/false : include in cost calculation or not
+cost_ratio = ""  # Cost ratio based on usage, if true, in decimal format
+image = "images/balance-cuisine.jpg"
+name_en = "Kitchen scale"
+
+[[ustensiles]]
+name = "Four"
+quantity = "1"
+bulk_quantity = "1"
+bulk_price = "250 euros"
+to_include_in_cost = "false" # true/false : include in cost calculation or not
+cost_ratio = ""  # Cost ratio based on usage, if true, in decimal format
+image = "images/four.jpg"
+name_en = "Oven"
+
+
+
+# Add more ingredients as needed (up to 8 total)
+# Uncomment and fill in the following templates:
+
+
+# [[ustensiles]]
 # name = ""
 # quantity = ""
 # bulk_quantity = ""
 # bulk_price = ""
+# to_include_in_cost = "" # true/false : include in cost calculation or not
+# cost_ratio = ""  # Cost ratio based on usage, if true, in decimal format
+
 
 # =============================================================================
 # Preparation Steps
 # =============================================================================
 
 [[steps]]
-text = "Mélanger la farine et le sucre."
+text = """Préchauffez le four à 240 °C (thermostat 8).
+Faire fondre le beurre dans une casserole à feu doux, réserver."""
+
 
 [[steps]]
-text = "Ajouter les œufs un à un."
+text = "Mélanger les oeufs avec le sucre, jusqu'à ce que le mélange blanchisse."
 
 [[steps]]
-text = "Faire fondre le beurre et l'incorporer à la pâte."
+text = "Ajouter ensuite la fleur d'oranger et 40 g de lait."
 
 [[steps]]
-text = "Laisser reposer la pâte au réfrigérateur pendant 1 heure."
+text = "Ajouter la farine et la levure chimique."
 
 [[steps]]
-text = "Remplir les moules à madeleines avec la pâte."
+text = "C'est ensuite le tour du beurre et le restant du lait; laisser reposer 15 min."
+
+[[steps]]
+text = """Beurrer les moules à madeleines et verser la préparation dedans.
+Attention : mais pas jusqu'en haut, les madeleines vont gonfler !."""
+
+[[steps]]
+text = """Enfourner à 240°C (thermostat 8), et baisser au bout de 5 min à 200°C (thermostat 6-7).
+laisser encore 10 min. Surveiller bien la cuisson !"""
+
+[[steps]]
+text = "Démouler dès la sortie du four. Laisser refroidir sur une grille."
 
 # Add more steps as needed (up to 8 total)
 # Uncomment and fill in the following templates:
@@ -95,11 +197,19 @@ text = "Remplir les moules à madeleines avec la pâte."
 # =============================================================================
 
 [cooking]
-time = "10 minutes"
-temperature = "200 °C (thermostat 6-7)"
-recipient = "Moules à madeleines"
+time = "15 minutes au total"
+
+temperature = """240°C x 5 min. (Th. 8)
+200 °C x 10 min. (Th. 6-7)"""
+
+recipient = "Moules à madeleines beurrés et farinés"
+
 precautions = "Beurrer et fariner les moules."
-verification_during = "Surveiller la cuisson après 8 minutes."
+
+verification_during = """Baisser la température après 5 minutes (thermostat 8 à 6-7)
+Surveiller la cuisson après 5 minutes.
+Ne pas laisser trop longtemps au four : ça brûle très vite!"""
+
 verification_end = "Vérifier la cuisson avec la pointe d'un couteau (doit ressortir sèche)."
 
 # =============================================================================
@@ -107,6 +217,6 @@ verification_end = "Vérifier la cuisson avec la pointe d'un couteau (doit resso
 # =============================================================================
 
 [serving]
-time_after = "Immédiatement après refroidissement"
-items = "12 madeleines"
-persons = "6 personnes"
+time_after = "Immédiatement après refroidissement sur une grille, 5 minutes après démoulage."
+items = "32 madeleines"
+persons = "16 personnes"

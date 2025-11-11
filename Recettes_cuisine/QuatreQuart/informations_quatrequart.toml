@@ -22,30 +22,45 @@ name = "Farine"
 quantity = "250 g"              # Quantity used in recipe
 bulk_quantity = "1 kg"          # Quantity you buy at the store
 bulk_price = "2,12 euros"       # Price of the bulk quantity
+image = "images/farine.jpg"
+name_en = "Flour"
+quantity_en = "8.8 oz (250 g)"
 
 [[ingredients]]
 name = "Sucre"
 quantity = "240 g"
 bulk_quantity = "1 kg"
 bulk_price = "1,80 euros"
+image = "images/sucre.jpg"
+name_en = "Sugar"
+quantity_en = "8.5 oz (240 g)"
 
 [[ingredients]]
 name = "Œufs"
 quantity = "4 œufs"
 bulk_quantity = "6 œufs"
 bulk_price = "2,27 euros"
+image = "images/oeuf.jpg"
+name_en = "Eggs"
+quantity_en = "4 eggs"
 
 [[ingredients]]
 name = "Levure chimique"
 quantity = "2 c à c"
 bulk_quantity = "1 s"
 bulk_price = "1.18"
+image = "images/levure-chimique.jpg"
+name_en = "Baking powder"
+quantity_en = "2 tsp"
 
 [[ingredients]]
 name = "Sucre vanillé"
 quantity = "10 g"
 bulk_quantity = "1 sachet"
 bulk_price = "2.58"
+image = "images/sucre-vanille.jpg"
+name_en = "Vanilla sugar"
+quantity_en = "1 packet (10 g)"
 
 # Add more ingredients as needed (uncomment and fill):
 
@@ -66,6 +81,60 @@ bulk_price = "2.58"
 # quantity = ""
 # bulk_quantity = ""
 # bulk_price = ""
+
+# =============================================================================
+# Ustensiles
+# =============================================================================
+
+[[ustensiles]]
+name = "Moule à cake"
+quantity = "1"
+bulk_quantity = "1"
+bulk_price = "8.50 euros"
+to_include_in_cost = "true"
+cost_ratio = "0.003"
+image = "images/moule-cake.jpg"
+name_en = "Loaf pan"
+
+[[ustensiles]]
+name = "Saladier"
+quantity = "1"
+bulk_quantity = "1"
+bulk_price = "9.45 euros"
+to_include_in_cost = "true"
+cost_ratio = "0.001"
+image = "images/saladier.jpg"
+name_en = "Mixing bowl"
+
+[[ustensiles]]
+name = "Fouet"
+quantity = "1"
+bulk_quantity = "1"
+bulk_price = "5.00 euros"
+to_include_in_cost = "true"
+cost_ratio = "0.001"
+image = "images/fouet.jpg"
+name_en = "Whisk"
+
+[[ustensiles]]
+name = "Balance de cuisine"
+quantity = "1"
+bulk_quantity = "1"
+bulk_price = "48.90 euros"
+to_include_in_cost = "false"
+cost_ratio = ""
+image = "images/balance-cuisine.jpg"
+name_en = "Kitchen scale"
+
+[[ustensiles]]
+name = "Four"
+quantity = "1"
+bulk_quantity = "1"
+bulk_price = "250 euros"
+to_include_in_cost = "false"
+cost_ratio = ""
+image = "images/four.jpg"
+name_en = "Oven"
 
 # =============================================================================
 # Preparation Steps (up to 8 total)

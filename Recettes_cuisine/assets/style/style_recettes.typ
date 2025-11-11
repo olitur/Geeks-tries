@@ -119,21 +119,62 @@
   ]
 }
 
-// Ingredients list with nice formatting
+// Ingredients list with nice formatting and images
 #let ingredients_section(ingredients) = [
   == \u{1F95A} Ingrédients
 
-  #set text(size: 11pt)
-  #pad(left: 1em)[
+  #set text(size: 10pt)
+  #pad(left: 0.5em)[
     #grid(
-      columns: (auto, 1fr, 1.5fr),
-      row-gutter: 0.8em,
-      column-gutter: 1em,
+      columns: (auto, 2fr, 1.5fr, auto),
+      row-gutter: 0.6em,
+      column-gutter: 0.8em,
       stroke: none,
+      align: (center, left, left, center),
       ..ingredients.map(ing => (
         [\u{2022}],
         [*#ing.name*],
-        [#text(fill: lightbrown, style: "italic")[#ing.quantity]]
+        [#text(fill: lightbrown, style: "italic")[#ing.quantity]],
+        if ing.at("image", default: none) != none [
+          #box(height: 1.2cm, width: 1.2cm)[
+            #image(ing.image, width: 100%, height: 100%, fit: "contain")
+          ]
+        ] else [
+          #box(height: 1.2cm, width: 1.2cm, stroke: 0.5pt + gray.lighten(50%), radius: 0.2em)[
+            #align(center + horizon)[#text(size: 8pt, fill: gray.lighten(30%))[?]]
+          ]
+        ]
+      )).flatten()
+    )
+  ]
+  #v(1em)
+]
+
+// Ustensiles list with nice formatting and images
+#let ustensiles_section(ustensiles) = [
+  == \u{1F374} Ustensiles
+
+  #set text(size: 10pt)
+  #pad(left: 0.5em)[
+    #grid(
+      columns: (auto, 2fr, 1fr, auto),
+      row-gutter: 0.6em,
+      column-gutter: 0.8em,
+      stroke: none,
+      align: (center, left, center, center),
+      ..ustensiles.map(ust => (
+        [\u{2022}],
+        [*#ust.name*],
+        [#text(fill: brown, style: "italic")[×#ust.quantity]],
+        if ust.at("image", default: none) != none [
+          #box(height: 1.2cm, width: 1.2cm)[
+            #image(ust.image, width: 100%, height: 100%, fit: "contain")
+          ]
+        ] else [
+          #box(height: 1.2cm, width: 1.2cm, stroke: 0.5pt + gray.lighten(50%), radius: 0.2em)[
+            #align(center + horizon)[#text(size: 8pt, fill: gray.lighten(30%))[?]]
+          ]
+        ]
       )).flatten()
     )
   ]
@@ -222,14 +263,14 @@
 ]
 
 // Cost breakdown table
-#let cost_table(ingredients, energy_cost: none, total: none) = [
+#let cost_table(ingredients, ustensiles: (), energy_cost: none, ustensiles_cost: none, total: none) = [
   == \u{1F4B0} Coût de revient
 
   #table(
     columns: (1fr, auto, auto),
     align: (left, center, right),
     stroke: 0.5pt + inkl,
-    fill: (col, row) => if row == 0 { orange.lighten(70%) } else if row == ingredients.len() + 1 { green.lighten(80%) },
+    fill: (col, row) => if row == 0 { orange.lighten(70%) } else if row == ingredients.len() + ustensiles.len() + 1 { green.lighten(80%) },
     inset: 0.7em,
 
     // Header
@@ -240,6 +281,13 @@
       [#ing.name],
       [#ing.quantity],
       [#text(fill: brown)[#ing.cost]]
+    )).flatten(),
+
+    // Ustensiles rows (only those included in cost)
+    ..ustensiles.filter(ust => ust.to_include == "true").map(ust => (
+      [#ust.name #text(size: 9pt, fill: gray)[(usage)]],
+      [×#ust.quantity],
+      [#text(fill: brown)[#ust.cost]]
     )).flatten(),
 
     // Energy cost if provided
@@ -299,6 +347,63 @@
     #content
   ]
   #v(1em)
+]
+
+// English translation box
+#let english_box(content) = [
+  #box(
+    fill: rgb("#e3f2fd"),
+    stroke: 1.5pt + rgb("#1976d2"),
+    radius: 0.5em,
+    inset: 1em,
+    width: 100%,
+  )[
+    #set text(size: 10.5pt)
+    #text(weight: "bold", fill: rgb("#1976d2"))[\u{1F30D} IN ENGLISH (GB/US):]
+    #v(0.5em)
+    #content
+  ]
+  #v(1em)
+]
+
+// English ingredients section
+#let ingredients_section_english(ingredients) = [
+  === \u{1F95A} Ingredients
+
+  #set text(size: 9.5pt)
+  #pad(left: 0.5em)[
+    #grid(
+      columns: (2.5fr, 1.5fr),
+      row-gutter: 0.5em,
+      column-gutter: 1em,
+      stroke: none,
+      align: (left, left),
+      ..ingredients.map(ing => (
+        [• *#ing.at("name_en", default: ing.name)*],
+        [#text(fill: rgb("#1976d2"), style: "italic")[#ing.at("quantity_en", default: ing.quantity)]],
+      )).flatten()
+    )
+  ]
+]
+
+// English ustensiles section
+#let ustensiles_section_english(ustensiles) = [
+  === \u{1F374} Utensils
+
+  #set text(size: 9.5pt)
+  #pad(left: 0.5em)[
+    #grid(
+      columns: (2.5fr, 1fr),
+      row-gutter: 0.5em,
+      column-gutter: 1em,
+      stroke: none,
+      align: (left, center),
+      ..ustensiles.map(ust => (
+        [• *#ust.at("name_en", default: ust.name)*],
+        [#text(fill: rgb("#1976d2"), style: "italic")[×#ust.quantity]],
+      )).flatten()
+    )
+  ]
 ]
 
 // ============================================================
@@ -429,7 +534,7 @@
 }
 
 // Process TOML recipe data - calculate costs and add formatted prices
-#let process-recipe-data(toml-data) = {
+#let process-recipe-data(toml-data, recipe-folder: "") = {
   // Process ingredients - add cost field to each ingredient
   let processed-ingredients = ()
   for ing in toml-data.ingredients {
@@ -439,12 +544,21 @@
       ing.at("quantity", default: none)
     )
 
+    // Prepend recipe folder to image path if provided
+    let image-path = ing.at("image", default: none)
+    if image-path != none and recipe-folder != "" {
+      image-path = recipe-folder + "/" + image-path
+    }
+
     processed-ingredients.push((
       name: ing.name,
       quantity: ing.quantity,
       bulk_quantity: ing.at("bulk_quantity", default: none),
       bulk_price: ing.at("bulk_price", default: none),
       cost: format-price(cost),
+      image: image-path,
+      name_en: ing.at("name_en", default: none),
+      quantity_en: ing.at("quantity_en", default: none),
     ))
   }
 
@@ -454,6 +568,52 @@
     total-ingredient-cost = total-ingredient-cost + extract-price-value(ing.cost)
   }
 
+  // Process ustensiles - add cost field to each ustensile
+  let processed-ustensiles = ()
+  let total-ustensiles-cost = 0.0
+
+  if "ustensiles" in toml-data {
+    for ust in toml-data.ustensiles {
+      let ust-cost = 0.0
+
+      // Check if to_include_in_cost is "true"
+      let include-in-cost = ust.at("to_include_in_cost", default: "false")
+      if include-in-cost == "true" {
+        let bulk-price = extract-price-value(ust.at("bulk_price", default: none))
+        let cost-ratio-str = ust.at("cost_ratio", default: "0")
+
+        // Parse cost_ratio (can be "0.005" or ".005")
+        let ratio = 0.0
+        if cost-ratio-str != "" {
+          let ratio-match = cost-ratio-str.match(regex("(\\d*\\.?\\d+)"))
+          if ratio-match != none {
+            ratio = float(ratio-match.text)
+          }
+        }
+
+        ust-cost = bulk-price * ratio
+        total-ustensiles-cost = total-ustensiles-cost + ust-cost
+      }
+
+      // Prepend recipe folder to image path if provided
+      let image-path = ust.at("image", default: none)
+      if image-path != none and recipe-folder != "" {
+        image-path = recipe-folder + "/" + image-path
+      }
+
+      processed-ustensiles.push((
+        name: ust.name,
+        quantity: ust.quantity,
+        bulk_quantity: ust.at("bulk_quantity", default: none),
+        bulk_price: ust.at("bulk_price", default: none),
+        to_include: include-in-cost,
+        cost: format-price(ust-cost),
+        image: image-path,
+        name_en: ust.at("name_en", default: none),
+      ))
+    }
+  }
+
   // Calculate energy cost
   let energy-cost = calculate-energy-cost(
     toml-data.cooking.at("time", default: none),
@@ -461,8 +621,8 @@
     rate-per-kwh: 0.51
   )
 
-  // Calculate total cost
-  let total-cost = total-ingredient-cost + energy-cost
+  // Calculate total cost (ingredients + ustensiles + energy)
+  let total-cost = total-ingredient-cost + total-ustensiles-cost + energy-cost
 
   // Process steps - extract text field from TOML array
   let processed-steps = ()
@@ -474,11 +634,13 @@
   (
     name: toml-data.name,
     ingredients: processed-ingredients,
+    ustensiles: processed-ustensiles,
     steps: processed-steps,
     cooking: toml-data.cooking,
     serving: toml-data.serving,
     prices: (
       energy: if energy-cost > 0.0 { format-price(energy-cost) } else { none },
+      ustensiles: if total-ustensiles-cost > 0.0 { format-price(total-ustensiles-cost) } else { none },
       total: format-price(total-cost),
     ),
   )
