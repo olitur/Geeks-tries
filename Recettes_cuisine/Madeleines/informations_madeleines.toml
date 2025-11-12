@@ -57,12 +57,21 @@ quantity_en = "0.3 oz (8 g)"
 
 [[ingredients]]
 name = "Fleur d'oranger"
-quantity = "2 c à s"
-bulk_quantity = ""
-bulk_price = ""
+quantity = "30 ml (2 c à soup.)"
+bulk_quantity = "200 ml"
+bulk_price = "1.86 euros"
 image = "images/fleur-oranger.jpg"
 name_en = "Orange blossom water"
 quantity_en = "2 tbsp"
+
+[[ingredients]]
+name = "Lait"
+quantity = "5 cl (50 g)"
+bulk_quantity = "100 cl (1 l)"
+bulk_price = "1.80 euros"
+image = "images/lait.jpg"
+name_en = "Milk"
+quantity_en = "2.8 tbsp"
 
 # Add more ingredients as needed (up to 8 total)
 # Uncomment and fill in the following templates:
@@ -109,7 +118,7 @@ quantity = "1"
 bulk_quantity = "1"
 bulk_price = "3.00 euros"
 to_include_in_cost = "true" # true/false : include in cost calculation or not
-cost_ratio = ".001"  # Cost ratio based on usage, if true, in decimal format
+cost_ratio = ".002"  # Cost ratio based on usage, if true, in decimal format
 image = "images/cuillere-bois.jpg"
 name_en = "Wooden spoon"
 
