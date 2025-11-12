@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
 """
-Orchestrateur complet : Clacul → Graphiques → Typst → PDF
+Orchestrateur complet : Calcul → Graphiques → Typst → PDF
 """
 
 import sys
 import subprocess
 from pathlib import Path
+import pandas as pd
+import matplotlib.pyplot as plt
 
 def workflow_complet(toml_file):
     print(f"\n🚀 Traitement de {toml_file}")
@@ -30,7 +32,7 @@ def workflow_complet(toml_file):
     
     # Étape 3: Générer Typst complet
     print("3️⃣ Génération Typst...")
-    generate_typst_report("resultats_calc.json", "enveloppe_forces.csv", "rapport_final.typ")
+    subprocess.run(["python", "generate_typst.py", "resultats_calc.json", "enveloppe_forces.csv", "rapport_final.typ"], check=True)
     
     # Étape 4: Compiler PDF
     print("4️⃣ Compilation PDF...")
