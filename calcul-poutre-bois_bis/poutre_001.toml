@@ -1,0 +1,143 @@
+# ██ Projet complet - Toutes les données Eurocode ███
+[projet]
+nom = "Rénovation immeuble 12 rue de la République - Grenoble"
+auteur = "Cabinet StructurePro"
+date = "2025-11-12"
+numero_dossier = "2025-0342"
+type_ouvrage = "bâtiment_habitation" # habitation, pont, batiment_historique, industriel
+
+[localisation_eurocode]
+pays = "France"
+region = "Auvergne-Rhône-Alpes"
+ville = "Grenoble"
+altitude = 380 # mètres - influence neige EC1-1-3
+departement = "Isère"
+zone_neige = "B2" # EC1-1-3 Annexe France Fig. B1
+zone_vent = "3" # EC1-1-4 Annexe France §A.2
+categorie_terrain = "IV" # EC1-1-4 Tableau 4.1
+
+[ouvrage]
+type = "bâtiment_habitation" # influence coefficients durabilité
+date_construction = 1950
+importance = "normale" # pour événements exceptionnels EC0-Annexe B
+
+// ███ DONNÉES POUTRE ███
+[poutre_existante]
+identifiant = "P01-SOLIVE-RDC-A"
+longueur = 7.35 # m entre nus d'appuis
+largeur = 0.53 # m
+hauteur = 0.62 # m
+essence_bois = "chêne"
+classe_resistance = "D30" # EN 338
+classe_service = "2" # EC5 §3.1.3 : 1=séche, 2=humidité 12-20%, 3>20%
+exposition = "intérieur"
+annee_construction = 1950
+
+// ███ MESURES TERRAIN OBLIGATOIRES ███
+[mesures_terrain]
+deflexion_mesuree = 0.045 # m (45 mm au centre)
+date_mesure = "15/10/2024"
+instrument = "niveau laser numérique"
+temperature = 18 # °C
+humidite_mesure = 65 # %HR
+remarques = "Flèche visible à l'œil nu, fissure longitudinale intrados"
+
+[degradations_etat]
+presence_eau = true
+description = "Fuites anciennes (toit 1970-1980), zones brunâtres, humidité cyclique"
+reduction_coefficient = 0.80 # k_exp - EC5 §2.4.1 expertise
+infestation_insectes = false
+fissures_longitudinales = true
+fissures_transversales = false
+dessication = "modérée"
+pourriture = "surface locale"
+etat_general = "mauvais" # bon, moyen, mauvais, critique
+
+// ███ STRATIGRAPHIE COMPLETE ███
+[stratigraphie_plancher]
+  [stratigraphie_plancher.carrelage]
+  epaisseur = 0.01 # m
+  poids_volumique = 22 # kN/m³
+  description = "Carrelage cérame 33×33 cm"
+  
+  [stratigraphie_plancher.chape_ciment]
+  epaisseur = 0.10 # m
+  poids_volumique = 22 # kN/m³
+  description = "Chape sèche traditionnelle, 10 cm"
+  
+  [stratigraphie_plancher.plancher_ancien]
+  epaisseur = 0.05 # m
+  poids_volumique = 5 # kN/m³ (bois ancien)
+  description = "Planches enfustage d'origine 1950"
+  
+  [plafond]
+  epaisseur = 0.013 # m
+  poids_volumique = 10 # kN/m³
+  description = "Plâtre traditionnel 13 mm"
+
+[charges_permanentes]
+  [charges_permanentes.amenagement]
+  valeur = 0.50 # kN/m²
+  description = "Cloisons légères, élec, plomberie"
+  
+  [charges_permanentes.finitions_additionnelles]
+  valeur = 0.30 # kN/m²
+  description = "Finitions, revêtements"
+
+// ███ CHARGES EXPLOITATION EUROCODE ███
+[charges_exploitation_eurocode]
+  qk = 1.5 # kN/m² - EC1-1-1 Tableau 6.1 (catégorie A - habitation)
+  psi_0 = 0.7 # EC0 Tableau A1.1 - combinaisons accidentelles
+  psi_1 = 0.5 # EC0 - combinaisons fréquentes
+  psi_2 = 0.3 # EC0 - combinaisons quasi-permanentes
+  categorie_ouvrage = "A" # EC1 Catégorie A (habitation), B (bureaux), C (lieux publics)
+  description = "Charges d'exploitation habituelles"
+
+// ███ ACTIONS NEIGE & VENT ███
+[actions_neige]
+  neige_sol_caract = 0.75 # kN/m² - Carte France EC1-1-3 (zone B2)
+  forme_toit = "Combles perdus"
+  coeff_forme = 0.8 # μ1 - EC1-1-3 §5.3
+  altitude_coef = 1.0 # facteur altitude
+  situation = "en situation normale" # ou exceptionnelle
+
+[actions_vent]
+  vitesse_ref = 24 # m/s - EC1-1-4 §4.2 France zone 3
+  cdir = 1.0 # coefficient de direction
+  cseason = 1.0 # coefficient saisonnier
+  pression_dynamique = 0.36 # kN/m²
+  categorie_terrain = "IV" # EC1-1-4 Tableau 4.1
+
+// ███ ACTIONS SISMIQUES (si applicable) ███
+[actions_sismiques]
+  zone = "faible" # France métropolitaine
+  coeff_acceleration = 0.0 # non applicable
+
+// ███ SEUILS DE DURABILITE & RENFORCEMENT ███
+[exigences_durabilite]
+  vie_utile_conception = 50 # ans - période de référence
+  classe_exposition = "XC1" # EN 206 (XC1=intérieur)
+  risque_corrosion = "faible"
+  entreprise_renfort = "non" # "oui" si utilisation impacts
+
+[seuils_decision]
+  taux_travail_max = 100 # %
+  fleche_ratio_max = 0.80
+  deflexion_mes_theorique_max = 1.0
+  taux_fissuration_max = 1.0 # non applicable bois
+
+[armature_proposee]
+  type_profile = "UPE" # EN 10365
+  nuance = "S235" # EN 10025-2
+  longueur_max = 4.0 # m
+  recouvrement_min = 0.20 # m
+  epaisseur_platine = 0.008 # 8 mm
+  symetrie = "double" # 2 UPE symétriques
+  externe = false # UPE caché dans poutre
+
+[details_boulonnage]
+  diametre = 0.012 # m
+  nuance = "8.8"
+  entraxe = 0.15 # m
+  dist_bord_min = 0.05 # m
+  mode_pose = "calage_serre" # ou serrage_leger
